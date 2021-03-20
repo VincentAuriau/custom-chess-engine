@@ -42,8 +42,13 @@ def test_failing_castling():
     game.move_from_coordinates(game.player1, 0, 4, 0, 6)
 
 
+def test_blocked_moves():
+    game = engine.Game()
+    game.move_from_coordinates(game.player1, 1, 4, 3, 4)
+    game.move_from_coordinates(game.player2, 7, 0, 5, 0)
 
 
 if __name__ == '__main__':
-    test_working_castling()
-    test_failing_castling()
+    # test_working_castling()
+    # test_failing_castling()
+    # test_blocked_moves()
