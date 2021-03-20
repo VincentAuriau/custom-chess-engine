@@ -292,6 +292,11 @@ class Bishop(Piece):
         dy = end.get_y() - start.get_y()
         print(dx, dy)
         if abs(dx) == abs(dy):
+            for i in range(abs(dx)):
+                x_trajectory = int(i / dx)
+                y_trajectory = int(i / dy)
+                if board.get_cell(x_trajectory, y_trajectory).get_piece is not None:
+                    return False
             return True
         else:
             return False
@@ -313,8 +318,17 @@ class Rook(Piece):
                 return False
         dx = end.get_x() - start.get_x()
         dy = end.get_y() - start.get_y()
-        print(dx, dy)
         if dx == 0 or dy == 0:
+            for i in range(abs(dx)):
+                x_trajectory = int(i / dx)
+                y_trajectory = start.get_y()
+                if board.get_cell(x_trajectory, y_trajectory).get_piece is not None:
+                    return False
+            for i in range(abs(dy)):
+                x_trajectory = start.get_x()
+                y_trajectory = int(i / dy)
+                if board.get_cell(x_trajectory, y_trajectory).get_piece is not None:
+                    return False
             return True
         else:
             return False
@@ -351,7 +365,24 @@ class Queen(Piece):
                 return False
         dx = end.get_x() - start.get_x()
         dy = end.get_y() - start.get_y()
-        if dx == 0 or dy == 0 or (abs(dx) == abs(dy)):
+        if dx == 0 or dy == 0:
+            for i in range(abs(dx)):
+                x_trajectory = int(i / dx)
+                y_trajectory = start.get_y()
+                if board.get_cell(x_trajectory, y_trajectory).get_piece is not None:
+                    return False
+            for i in range(abs(dy)):
+                x_trajectory = start.get_x()
+                y_trajectory = int(i / dy)
+                if board.get_cell(x_trajectory, y_trajectory).get_piece is not None:
+                    return False
+            return True
+        elif abs(dx) == abs(dy):
+            for i in range(abs(dx)):
+                x_trajectory = int(i / dx)
+                y_trajectory = int(i / dy)
+                if board.get_cell(x_trajectory, y_trajectory).get_piece is not None:
+                    return False
             return True
         else:
             return False
@@ -469,6 +500,7 @@ class Move:
 
     def is_possible_move(self, board):
         # To be implemented
+        # Should be kept ?
         return None
 
 
