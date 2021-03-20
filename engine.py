@@ -3,9 +3,9 @@
 # Rajouter le changement du pion en autre piece
 # Rajouter l'impossibilité du king de bouger si case menacée
 # Plus généralement faire attnention aux moments où le roi est maté
-# checker le castling -> Updater les has_moved attributes et castling_done etc...
+# checker le castling ( plus de tests)
 # Rajouter fin du game
-# Sauvegarder partie
+# Sauvegarder état partie
 
 
 class Color:
@@ -32,13 +32,13 @@ class Cell:
     def get_y(self):
         return self.y
 
-    def is_threatened(self, board, threaten_color): #change threaten_color par #white_threatened
+    def is_threatened(self, board, threaten_color):  # change threaten_color par #white_threatened
         # Check Knights threatening
         for i, j in [(2, 1), (-2, 1), (2, -1), (-2, -1), (1, 2), (1, -2), (-1, 2), (-1, -2)]:
             x_to_check = self.x + i
             y_to_check = self.y + j
 
-            if x_to_check > 0 and x_to_check < 8 and y_to_check > 0 and y_to_check < 8:
+            if 0 < x_to_check < 8 and 0 < y_to_check < 8:
                 cell_to_check = board.get_cell(x_to_check, y_to_check)
                 piece_to_check = cell_to_check.get_piece()
 
@@ -51,11 +51,12 @@ class Cell:
             x_to_check = self.x + i
             y_to_check = self.y + j
 
-            if x_to_check > 0 and x_to_check < 8 and y_to_check > 0 and y_to_check < 8:
+            if 0 < x_to_check < 8 and 0 < y_to_check < 8:
                 cell_to_check = board.get_cell(x_to_check, y_to_check)
                 piece_to_check = cell_to_check.get_piece()
 
-                if isinstance(piece_to_check, King) or isinstance(piece_to_check, Rook) or isinstance(piece_to_check, Queen):
+                if isinstance(piece_to_check, King) or isinstance(piece_to_check, Rook) or isinstance(piece_to_check,
+                                                                                                      Queen):
                     if piece_to_check.is_white() != threaten_color:
                         return True
 
@@ -125,16 +126,16 @@ class Cell:
             x_to_check = self.x + i
             y_to_check = self.y + j
 
-            if x_to_check > 0 and x_to_check < 8 and y_to_check > 0 and y_to_check < 8:
+            if 0 < x_to_check < 8 and 0 < y_to_check < 8:
                 cell_to_check = board.get_cell(x_to_check, y_to_check)
                 piece_to_check = cell_to_check.get_piece()
 
-                if isinstance(piece_to_check, King) or isinstance(piece_to_check, Bishop) or isinstance(piece_to_check, Queen):
+                if isinstance(piece_to_check, King) or isinstance(piece_to_check, Bishop) or isinstance(piece_to_check,
+                                                                                                        Queen):
                     if piece_to_check.is_white() != threaten_color:
                         return True
                 elif i > 0 and threaten_color and isinstance(piece_to_check, Pawn):
                     if piece_to_check.is_white() != threaten_color:
-                        return True
                         return True
                 elif i < 0 and not threaten_color and isinstance(piece_to_check, Pawn):
                     if piece_to_check.is_white() != threaten_color:
@@ -236,12 +237,13 @@ class Piece:
         else:
             return Color.RED + value + Color.WHITE
 
+
 class Pawn(Piece):
 
     def __init__(self, white):
         super().__init__(white)
-        self.has_moved = False # if the pawn has yet been moved or not to keep ?
-        self.last_move_is_double = False # check for en passant, if last move was a double tap
+        self.has_moved = False  # if the pawn has yet been moved or not to keep ?
+        self.last_move_is_double = False  # check for en passant, if last move was a double tap
 
     def can_move(self, board, start, end):
         if end.get_piece() is not None:
@@ -297,6 +299,7 @@ class Bishop(Piece):
     def get_str(self):
         return '  B  '
 
+
 class Rook(Piece):
 
     def __init__(self, white):
@@ -318,6 +321,7 @@ class Rook(Piece):
 
     def get_str(self):
         return '  R  '
+
 
 class Knight(Piece):
 
@@ -373,8 +377,7 @@ class King(Piece):
         dx = end.get_x() - start.get_x()
         dy = end.get_y() - start.get_y()
 
-        ### Check if not chess
-
+        # Check if not chess
         if abs(dx) < 2 and abs(dy) < 2:
             return True
         else:
@@ -387,7 +390,8 @@ class King(Piece):
 class Board:
 
     def __init__(self):
-        self.board = self.reset_board()
+        self.board = None
+        self.reset_board()
 
     def get_cell(self, x, y):
 
@@ -419,7 +423,7 @@ class Board:
         line = [Cell(7, 0, Rook(False)), Cell(7, 1, Knight(False)), Cell(7, 2, Bishop(False)), Cell(7, 3, Queen(False)),
                 Cell(7, 4, King(False)), Cell(7, 5, Bishop(False)), Cell(7, 6, Knight(False)), Cell(7, 7, Rook(False))]
         board.append(line)
-        return board
+        self.board = board
 
     def draw(self):
         print('    |  0  |  1  |  2  |  3  |  4  |  5  |  6  |  7  |')
@@ -463,6 +467,9 @@ class Move:
         assert isinstance(self.moved_piece, King)
         self.moved_piece.castling_done = True
 
+    def is_possible_move(self, board):
+        '''TBD'''
+        return None
 
 class Game:
 
@@ -487,6 +494,9 @@ class Game:
         move = Move(player, start_cell, end_cell)
 
         return self.move(move, player)
+
+    def draw_board(self):
+        self.board.draw()
 
     def move(self, move, player):
         moved_piece = move.moved_piece
