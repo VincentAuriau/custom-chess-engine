@@ -225,7 +225,8 @@ class Piece:
         self.killed = killed
 
     def can_move(self, board, start, end):
-        pass
+        if start.get_x() == end.get_x() and start.get_y() == end.get_y():
+            return False
 
     def get_str(self):
         return '     '
@@ -285,17 +286,18 @@ class Bishop(Piece):
         super().__init__(white)
 
     def can_move(self, board, start, end):
+        super().can_move(board, start, end)
         if end.get_piece() is not None:
             if end.get_piece().is_white() == self.is_white():
                 return False
         dx = end.get_x() - start.get_x()
         dy = end.get_y() - start.get_y()
-        print(dx, dy)
         if abs(dx) == abs(dy):
-            for i in range(abs(dx)):
-                x_trajectory = int(i / dx)
-                y_trajectory = int(i / dy)
-                if board.get_cell(x_trajectory, y_trajectory).get_piece is not None:
+            for i in range(1, abs(dx)):
+                x_trajectory = i * int(dx / abs(dx)) + start.get_x()
+                y_trajectory = i * int(dy / abs(dy)) + start.get_y()
+                if board.get_cell(x_trajectory, y_trajectory).get_piece() is not None:
+                    print('Bishop line of sight blocked')
                     return False
             return True
         else:
@@ -312,6 +314,7 @@ class Rook(Piece):
         self.has_moved = False
 
     def can_move(self, board, start, end):
+        super().can_move(board, start, end)
         if end.get_piece() is not None:
             print('There is piece')
             if end.get_piece().is_white() == self.is_white():
@@ -319,15 +322,17 @@ class Rook(Piece):
         dx = end.get_x() - start.get_x()
         dy = end.get_y() - start.get_y()
         if dx == 0 or dy == 0:
-            for i in range(abs(dx)):
-                x_trajectory = int(i / dx)
+            for i in range(1, abs(dx)):
+                x_trajectory = i * int(dx / abs(dx)) + start.get_x()
                 y_trajectory = start.get_y()
-                if board.get_cell(x_trajectory, y_trajectory).get_piece is not None:
+                if board.get_cell(x_trajectory, y_trajectory).get_piece() is not None:
+                    print('Rook line of sight blocked')
                     return False
-            for i in range(abs(dy)):
+            for i in range(1, abs(dy)):
                 x_trajectory = start.get_x()
-                y_trajectory = int(i / dy)
-                if board.get_cell(x_trajectory, y_trajectory).get_piece is not None:
+                y_trajectory = i * int(dy / abs(dy)) + start.get_y()
+                if board.get_cell(x_trajectory, y_trajectory).get_piece() is not None:
+                    print('Rook line of sight blocked')
                     return False
             return True
         else:
@@ -360,28 +365,32 @@ class Queen(Piece):
         super().__init__(white)
 
     def can_move(self, board, start, end):
+        super().can_move(board, start, end)
         if end.get_piece() is not None:
             if end.get_piece().is_white() == self.is_white():
                 return False
         dx = end.get_x() - start.get_x()
         dy = end.get_y() - start.get_y()
         if dx == 0 or dy == 0:
-            for i in range(abs(dx)):
-                x_trajectory = int(i / dx)
+            for i in range(1, abs(dx)):
+                x_trajectory = i * int(dx / abs(dx)) + start.get_x()
                 y_trajectory = start.get_y()
-                if board.get_cell(x_trajectory, y_trajectory).get_piece is not None:
+                if board.get_cell(x_trajectory, y_trajectory).get_piece() is not None:
+                    print('Queen line of sight blocked')
                     return False
-            for i in range(abs(dy)):
+            for i in range(1, abs(dy)):
                 x_trajectory = start.get_x()
-                y_trajectory = int(i / dy)
-                if board.get_cell(x_trajectory, y_trajectory).get_piece is not None:
+                y_trajectory = i * int(dy / abs(dy)) + start.get_y()
+                if board.get_cell(x_trajectory, y_trajectory).get_piece() is not None:
+                    print('Queen line of sight blocked')
                     return False
             return True
         elif abs(dx) == abs(dy):
-            for i in range(abs(dx)):
-                x_trajectory = int(i / dx)
-                y_trajectory = int(i / dy)
-                if board.get_cell(x_trajectory, y_trajectory).get_piece is not None:
+            for i in range(1, abs(dx)):
+                x_trajectory = i * int(dx / abs(dx)) + start.get_x()
+                y_trajectory = i * int(dy / abs(dy)) + start.get_y()
+                if board.get_cell(x_trajectory, y_trajectory).get_piece() is not None:
+                    print('Queen line of sight blocked')
                     return False
             return True
         else:
@@ -471,6 +480,7 @@ class Board:
                 current_line += '|'
             print(current_line)
             print(boarder_line)
+        print('\n')
 
 
 class Player:
