@@ -468,8 +468,9 @@ class Move:
         self.moved_piece.castling_done = True
 
     def is_possible_move(self, board):
-        '''TBD'''
+        # To be implemented
         return None
+
 
 class Game:
 
@@ -501,8 +502,8 @@ class Game:
     def move(self, move, player):
         moved_piece = move.moved_piece
 
-        ### List of checks
-        ### To change if castling or en passant move
+        # List of checks
+        # To change if castling or en passant move
         assert moved_piece is not None
         assert player == self.to_play_player
         assert moved_piece.is_white() == player.is_white_side()
@@ -518,7 +519,7 @@ class Game:
                         # Revoir comment on update cet attribut last_move_is_double
                         can_move = True
 
-        ### castling & check if end cell is not threatened?
+        # castling & check if end cell is not threatened?
         if isinstance(moved_piece, King):
             if move.end.is_threatened(self.board, moved_piece.is_white()):
                 raise ValueError('King cannot move to a threatened celle')
@@ -528,7 +529,7 @@ class Game:
                 print('King moving, not threatened in new cell but cannot move toward it')
 
                 if not moved_piece.castling_done and not moved_piece.has_moved and (move.end.y == 6 or move.end.y == 2):
-                    if move.end.y == 6: # Roque vers la droite
+                    if move.end.y == 6:  # Roque vers la droite
                         rook_to_move = self.board.get_cell(move.start.x, 7).get_piece()
                         rook_starting_coordinates = (move.start.x, 7)
                         rook_ending_coordinates = (move.start.x, 5)
@@ -587,7 +588,7 @@ class Game:
         # Check if piece can move
         assert can_move
 
-        ### take piece ?
+        # take piece ?
         destination_piece = move.end.get_piece()
         if destination_piece is not None:
             assert destination_piece.is_white() != player.is_white_side()
@@ -596,12 +597,12 @@ class Game:
 
         self.played_moves.append(move)
 
-        ### Move pieces
+        # Move pieces
         move.end.set_piece(move.start.get_piece())
         move.start.set_piece(None)
         move.set_moved_attribute()
 
-        ### Check for castling
+        # Check for castling
         if move.complementary_castling is not None:
             print('Apparently castling move, working on moving the Rook')
             castling_rook, rook_start, rook_end = move.complementary_castling
@@ -609,15 +610,13 @@ class Game:
             rook_start.set_piece(None)
             move.set_castling_done()
 
+        # Check Chess
+            # Recherche les deux rois et checker can_move?
 
-        ### Check Chess
-            ### Recherche les deux rois et checker can_move?
-
-        ### Change player
+        # Change player
         if self.to_play_player == self.player1:
             self.to_play_player = self.player2
         else:
             self.to_play_player = self.player1
 
         self.board.draw()
-
