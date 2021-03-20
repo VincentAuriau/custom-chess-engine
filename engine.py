@@ -1,10 +1,9 @@
 # Rajouter dans les can move que l'on ne peut pas passer au dessus d'une pièce
-# Castling not finished
 # En passant taking piece with pawn not finished (comment updater l'attribut last_move_is_double
 # Rajouter le changement du pion en autre piece
 # Rajouter l'impossibilité du king de bouger si case menacée
 # Plus généralement faire attnention aux moments où le roi est maté
-# checker le castling
+# checker le castling -> Updater les has_moved attributes et castling_done etc...
 # Rajouter fin du game
 # Sauvegarder partie
 
@@ -456,6 +455,15 @@ class Move:
         self.complementary_castling = None
         self.complementary_passant = None
 
+    def set_moved_attribute(self):
+        if hasattr(self.moved_piece, 'has_moved'):
+            self.moved_piece.has_moved = True
+
+    def set_castling_done(self):
+        assert isinstance(self.moved_piece, King)
+        self.moved_piece.castling_done = True
+
+
 class Game:
 
     game_status = []
@@ -577,6 +585,7 @@ class Game:
         ### Move pieces
         move.end.set_piece(move.start.get_piece())
         move.start.set_piece(None)
+        move.set_moved_attribute()
 
         ### Check for castling
         if move.complementary_castling is not None:
@@ -584,6 +593,7 @@ class Game:
             castling_rook, rook_start, rook_end = move.complementary_castling
             rook_end.set_piece(castling_rook)
             rook_start.set_piece(None)
+            move.set_castling_done()
 
 
         ### Check Chess
