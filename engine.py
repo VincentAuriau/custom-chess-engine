@@ -523,8 +523,11 @@ class Game:
                         rook_starting_coordinates = (move.start.x, 7)
                         rook_ending_coordinates = (move.start.x, 5)
                         if isinstance(rook_to_move, Rook):
-                            must_be_empty_cells = [self.board.get_cell(move.start.x, 5), self.board.get_cell(move.start.x, 6)]
-                            must_not_be_threatened_cells = [self.board.get_cell(move.start.x, 5), self.board.get_cell(move.start.x, 6)]
+                            must_be_empty_cells = [self.board.get_cell(move.start.x, 5),
+                                                   self.board.get_cell(move.start.x, 6)]
+                            must_not_be_threatened_cells = [self.board.get_cell(move.start.x, 4),
+                                                            self.board.get_cell(move.start.x, 5),
+                                                            self.board.get_cell(move.start.x, 6)]
 
                     if move.end.y == 2:  # Roque vers la gauche
                         rook_to_move = self.board.get_cell(move.start.x, 0).get_piece()
@@ -535,7 +538,8 @@ class Game:
                                                    self.board.get_cell(move.start.x, 2),
                                                    self.board.get_cell(move.start.x, 3)]
                             must_not_be_threatened_cells = [self.board.get_cell(move.start.x, 2),
-                                                            self.board.get_cell(move.start.x, 3)]
+                                                            self.board.get_cell(move.start.x, 3),
+                                                            self.board.get_cell(move.start.x, 4)]
 
                     empty_cells_check = True
                     not_threatened_cells = True
