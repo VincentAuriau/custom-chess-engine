@@ -1,6 +1,9 @@
 import copy
+import sys
 
-import engine
+sys.path.append("../")
+
+import engine.engine as engine
 #import move
 #import time
 #import ai_player
@@ -13,8 +16,9 @@ validated_move, winner = game.move_from_coordinates(game.player1, 1, 4, 3, 4)
 ai_move = game.player2.time_to_play(game.board)
 game_is_on = game.move(ai_move, game.player2)
 
-from my_player import MyPlayer
-my_player = MyPlayer(False)
+from player.my_player import MyPlayer
+
+my_player = MyPlayer(white_side=False)
 game = engine.Game(automatic_draw=False, ai=True)
 validated_move, winner = game.move_from_coordinates(game.player1, 1, 4, 3, 4)
 ai_move = my_player.time_to_play(game.board)
