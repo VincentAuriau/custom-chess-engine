@@ -6,3 +6,5 @@ if __name__ == '__main__':
     MyApp().run()
 
 ```
+
+![](interface_example.PNG)
