@@ -1,4 +1,4 @@
-from color import Color
+from engine.color import Color
 
 
 class Piece(object):
@@ -9,6 +9,11 @@ class Piece(object):
 
         self.x = x
         self.y = y
+
+    def piece_deepcopy(self):
+        copied_piece = Piece(self.white, self.x, self.y)
+        copied_piece.killed = self.killed
+        return copied_piece
 
     def is_white(self):
         return self.white
@@ -51,6 +56,13 @@ class Pawn(Piece):
         super().__init__(*args, **kwargs)
         self.has_moved = False  # if the pawn has yet been moved or not to keep ?
         self.last_move_is_double = False  # check for en passant, if last move was a double tap
+
+    def piece_deepcopy(self):
+        copied_piece = Pawn(self.white, self.x, self.y)
+        copied_piece.killed = self.killed
+        copied_piece.has_moved = self.has_moved
+        copied_piece.last_move_is_double = self.last_move_is_double
+        return copied_piece
 
     def piece_move_authorized(self, start, end):
         if end.get_piece() is not None:
@@ -153,6 +165,11 @@ class Bishop(Piece):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+    def piece_deepcopy(self):
+        copied_piece = Bishop(self.white, self.x, self.y)
+        copied_piece.killed = self.killed
+        return copied_piece
+
     def piece_move_authorized(self, start, end):
         if start.get_x() == end.get_x() and start.get_y() == end.get_y():
             return False
@@ -227,6 +244,12 @@ class Rook(Piece):
         super().__init__(*args, **kwargs)
         self.has_moved = False
 
+    def piece_deepcopy(self):
+        copied_piece = Rook(self.white, self.x, self.y)
+        copied_piece.killed = self.killed
+        copied_piece.has_moved = self.has_moved
+        return copied_piece
+
     def piece_move_authorized(self, start, end):
         if start.get_x() == end.get_x() and start.get_y() == end.get_y():
             return False
@@ -298,6 +321,11 @@ class Knight(Piece):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+    def piece_deepcopy(self):
+        copied_piece = Knight(self.white, self.x, self.y)
+        copied_piece.killed = self.killed
+        return copied_piece
+
     def piece_move_authorized(self, start, end):
         if end.get_piece() is not None:
             if end.get_piece().is_white() == self.is_white():
@@ -329,6 +357,11 @@ class Queen(Piece):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+    def piece_deepcopy(self):
+        copied_piece = Queen(self.white, self.x, self.y)
+        copied_piece.killed = self.killed
+        return copied_piece
 
     def piece_move_authorized(self, start, end):
         if start.get_x() == end.get_x() and start.get_y() == end.get_y():
@@ -437,6 +470,13 @@ class King(Piece):
         super().__init__(*args, **kwargs)
         self.castling_done = False
         self.has_moved = False
+
+    def piece_deepcopy(self):
+        copied_piece = King(self.white, self.x, self.y)
+        copied_piece.killed = self.killed
+        copied_piece.castling_done = self.castling_done
+        copied_piece.has_moved = self.has_moved
+        return copied_piece
 
     def set_castling_done(self, castling_done):
         self.castling_done = castling_done

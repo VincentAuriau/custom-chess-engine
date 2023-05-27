@@ -12,7 +12,7 @@ from kivy.graphics import Rectangle, Color, Canvas
 
 import numpy as np
 
-from engine import Game
+from engine.engine import Game
 
 import time
 
@@ -190,10 +190,8 @@ class TableScreen(GridLayout):
 
                     print('Time for AI')
                     ai_move = self.game.player2.time_to_play(self.game.board)
-                    print(ai_move)
-                    print(ai_move.start.x, ai_move.start.y)
-                    print(ai_move.end.x, ai_move.end.y)
                     self.game.board.draw()
+                    print(self.game.player2.memory.memory)
                     game_is_on = self.game.move(ai_move, self.game.player2)
 
                     if game_is_on[0]:

@@ -1,6 +1,7 @@
 import copy
+import pickle
 
-import material
+import engine.material as material
 
 
 class Move:
@@ -18,6 +19,16 @@ class Move:
         self.complementary_castling = None
         self.en_passant = False
         self.transform_pawn = False
+
+    def deepcopy(self):
+        copied_board = self.board.deepcopy()
+        copied_move = Move(self.player, copied_board, copied_board.get_cell(self.start.x, self.start.y),
+                           copied_board.get_cell(self.end.x, self.end.y))
+        copied_move.is_castling = self.is_castling
+        copied_move.complementary_castling = self.complementary_castling
+        copied_move.en_passant = self.en_passant
+        copied_move.transform_pawn = self.transform_pawn
+        return copied_move
 
     def _set_moved_attribute(self):
         if hasattr(self.moved_piece, 'has_moved'):
@@ -268,7 +279,10 @@ class Move:
 
     def _work_future_to_check_chess(self):
         """TO BE DONE LAST"""
-        move = copy.deepcopy(self)
+
+        # move = copy.deepcopy(self)
+        move = self.deepcopy()
+        # move = pickle.loads(pickle.dumps(self, -1))
         move.move_pieces()
 
         if move.player.is_white_side():

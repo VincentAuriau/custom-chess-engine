@@ -1,9 +1,10 @@
 import copy
+import pickle
 import numpy as np
-from player import Player
-import material
-import move
-import numpy as np
+
+from player.player import Player
+import engine.material as material
+import engine.move as move
 
 
 class EasyAIPlayer(Player):
@@ -129,10 +130,8 @@ class EasyAIPlayer(Player):
     def _select_move_from_score(self, moves, method="max"):
         all_scores = {}
         for mv in moves:
-            mv_ = copy.deepcopy(mv)
-            ###print("mv")
-            ###print(mv_.start.x, mv_.start.y, mv.moved_piece)
-            ###print(mv_.end.x, mv_.end.y, mv.moved_piece)
+            mv_ = pickle.loads(pickle.dumps(mv, -1))
+            # mv_ = copy.deepcopy(mv)
             mv_.move_pieces()
             score = self._score_board(mv_.board)
             all_scores[mv] = score
@@ -144,11 +143,9 @@ class EasyAIPlayer(Player):
             all_indexes = np.where(scores == np.min(scores))[0]
         else:
             raise ValueError("MIN OR MAX ALGO, selected %s" % method)
-        ###print("ALL INDEXES", all_indexes)
+
         perm = np.random.permutation(len(all_indexes))[0]
         final_index = all_indexes[perm]
-        ###print("ALL SCORES:", all_scores.values())
-        ###print(final_index)
         return list(all_scores.keys())[int(final_index)], scores[final_index]
 
     # def _def_get_best_score(self, moves, method="max"):
@@ -175,7 +172,9 @@ class EasyAIPlayer(Player):
             new_method = {"max": "min", "min": "max"}
             scores = []
             for p_mv in possible_moves:
-                p_mv = copy.deepcopy(p_mv)
+                p_mv = p_mv.deepcopy()
+                # p_mv = pickle.loads(pickle.dumps(p_mv, -1))
+                # p_mv = copy.deepcopy(p_mv)
                 p_mv.move_pieces()
                 _, score = self._search_tree(p_mv.board, depth=depth-1, method=new_method[method])
                 scores.append(score)
@@ -193,7 +192,9 @@ class EasyAIPlayer(Player):
 
     def _score_move(self, move):
         all_scores = {}
-        mv_ = copy.deepcopy(move)
+        mv_ = move.deepcopy()
+        # mv_ = pickle.loads(pickle.dumps(move, -1))
+        # mv_ = copy.deepcopy(move)
         mv_.move_pieces()
         score = self._score_board(mv_.board)
 
@@ -219,7 +220,9 @@ class EasyAIPlayer(Player):
             for p_mv in possible_moves:
                 ###print("Move", i, "on", len(possible_moves), "for depth", depth, p_mv.end.x)
                 i += 1
-                p_mv_ = copy.deepcopy(p_mv)
+                # p_mv_ = pickle.loads(pickle.dumps(p_mv, -1))
+                # p_mv_ = copy.deepcopy(p_mv)
+                p_mv_ = p_mv.deepcopy()
                 p_mv_.move_pieces()
                 score, _ = self._alpha_beta(p_mv_.board, init_move=p_mv_, depth=depth-1, alpha=alpha, beta=beta,
                                             is_white=not is_white)
@@ -240,7 +243,8 @@ class EasyAIPlayer(Player):
             best_score = 10000
             best_move = None
             for p_mv in possible_moves:
-                p_mv_ = copy.deepcopy(p_mv)
+                # p_mv_ = pickle.loads(pickle.dumps(p_mv, -1))
+                p_mv_ = p_mv.deepcopy()
                 p_mv_.move_pieces()
                 score, _ = self._alpha_beta(p_mv_.board, init_move=p_mv_, depth=depth-1, alpha=alpha, beta=beta,
                                             is_white=is_white)
@@ -281,7 +285,7 @@ class EasyAIPlayer(Player):
                             return selected_move
         ###print('No moved found, aborting...')
 
-    def time_to_play(self, board):
+    def time_to_play(self, board, depth=3):
         board.draw()
         current_score = self._score_board(board)
         ###print("SCORE:", current_score)
@@ -290,7 +294,7 @@ class EasyAIPlayer(Player):
         # sel_move, sel_score = self._select_move_from_score(all_possible_moves)
         # sel_move, sel_score = self._search_tree(board, depth=3)
         board.draw()
-        sel_score, sel_move = self._alpha_beta(board, depth=2)
+        sel_score, sel_move = self._alpha_beta(board, depth=depth)
         board.draw()
         ###print("future score:", sel_score)
         ###print(sel_move.start.x, sel_move.start.y, sel_move.end.x, sel_move.end.y, self.color)

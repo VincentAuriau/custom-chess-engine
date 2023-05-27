@@ -1,9 +1,12 @@
-import engine
+import sys
+sys.path.append("../python")
+
+import engine.engine as engine
 import importlib
-import move
+import engine.move as move
 import time
 importlib.reload(engine)
-import ai_player
+import player.ai_player as ai_player
 
 def test_working_castling():
     game = engine.Game()
@@ -189,18 +192,18 @@ def test_player():
 
 
 if __name__ == '__main__':
-    # check_unchecking()
+    check_unchecking()
     test_working_castling()
-    # test_failing_castling()
-    # test_blocked_moves()
-    # test_en_passant()
-    # test_end_game()
-    # test_pawn_transformation()
-    # test_blocked_double_pawn()
-    # test_king_taking_queen()
-    # specific_test()
-    # possible_moves()
-    # test_player()
+    test_failing_castling()
+    test_blocked_moves()
+    test_en_passant()
+    test_end_game()
+    test_pawn_transformation()
+    test_blocked_double_pawn()
+    test_king_taking_queen()
+    specific_test()
+    possible_moves()
+    test_player()
     print('Tests finished')
 
     import sys

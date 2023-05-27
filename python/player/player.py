@@ -1,5 +1,6 @@
 import numpy as np
-from move import Move
+
+from engine.move import Move
 
 
 class Player:

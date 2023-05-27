@@ -7,10 +7,11 @@
 
 import copy
 
-from move import Move
-from player import Player, AIRandomPlayer
-from ai_player import EasyAIPlayer
-import material
+from engine.move import Move
+from player.player import Player, AIRandomPlayer
+from player.ai_player import EasyAIPlayer
+from player.my_player import MyPlayer
+import engine.material as material
 
 
 class Color:
@@ -27,6 +28,10 @@ class Cell:
         if piece is not None:
             self.piece.x = x
             self.piece.y = y
+
+    def __deepcopy__(self, memodict={}):
+        copy_object = Cell(self.x, self.y, copy.deepcopy(self.piece))
+        return copy_object
 
     def set_piece(self, piece):
         self.piece = piece
@@ -223,15 +228,147 @@ class Cell:
 
 class Board:
 
-    def __init__(self):
-        self.board = None
-        self.white_king, self.black_king, self.all_material = self._reset_board()
+    def __init__(self, empty_init=False):
+        if not empty_init:
+            self.board = None
+            self.white_king, self.black_king, self.all_material = self._reset_board()
+
+    def deepcopy(self, memodict={}):
+        copied_object = Board(empty_init=True)
+        board = [[Cell(i, j, None) for j in range(8)] for i in range(8)]
+        copied_object.board = board
+        copied_material = self.deep_copy_material()
+        white_king = copied_material['white']['alive']['king'][0]
+        black_king = copied_material['black']['alive']['king'][0]
+        copied_object.all_material = copied_material
+        copied_object.white_king = white_king
+        copied_object.black_king = black_king
+        for piece_list in copied_material['white']['alive'].values():
+            for piece in piece_list:
+                copied_object.get_cell(piece.x, piece.y).set_piece(piece)
+        for piece_list in copied_material['black']['alive'].values():
+            for piece in piece_list:
+                copied_object.get_cell(piece.x, piece.y).set_piece(piece)
+
+        return copied_object
+
+    def deep_copy_material(self):
+        material = {
+            "white": {
+                "alive": {
+                    "pawn": [],
+                    "knight": [],
+                    "bishop": [],
+                    "rook": [],
+                    "queen": [],
+                    "king": []
+                },
+                "killed": {
+                    "pawn": [],
+                    "knight": [],
+                    "bishop": [],
+                    "rook": [],
+                    "queen": [],
+                    "king": []
+                }
+            },
+            "black": {
+                "alive": {
+                    "pawn": [],
+                    "knight": [],
+                    "bishop": [],
+                    "rook": [],
+                    "queen": [],
+                    "king": []
+                },
+                "killed": {
+                    "pawn": [],
+                    "knight": [],
+                    "bishop": [],
+                    "rook": [],
+                    "queen": [],
+                    "king": []
+                }
+            }
+        }
+
+        for color in ['white', 'black']:
+            for status in ['alive', 'killed']:
+                for piece_type in ['pawn', 'knight', 'bishop', 'rook', 'queen', 'king']:
+                    for piece in self.all_material[color][status][piece_type]:
+                        material[color][status][piece_type].append(piece.piece_deepcopy())
+        return material
+
+    def __deepcopy__(self, memodict={}):
+        copied_object = Board(empty_init=True)
+        board = [[Cell(i, j, None) for j in range(8)] for i in range(8)]
+        copied_object.board = board
+        copied_material = self.deep_copy_material()
+
+        white_king = copied_material['white']['alive']['king'][0]
+        black_king = copied_material['black']['alive']['king'][0]
+        copied_object.all_material = copied_material
+        copied_object.white_king = white_king
+        copied_object.black_king = black_king
+        for piece_list in copied_material['white']['alive'].values():
+            for piece in piece_list:
+                copied_object.get_cell(piece.x, piece.y).set_piece(piece)
+        for piece_list in copied_material['black']['alive'].values():
+            for piece in piece_list:
+                copied_object.get_cell(piece.x, piece.y).set_piece(piece)
+
+        return copied_object
+
+    def to_fen(self):
+        fen = ""
+        for line in self.board:
+            no_piece_count = 0
+            for cell in line:
+                piece = cell.get_piece()
+                if piece is None:
+                    no_piece_count += 1
+                else:
+                    if no_piece_count > 0:
+                        fen += str(no_piece_count)
+                        no_piece_count = 0
+                    letter = piece.get_str().replace(' ', '')
+                    if piece.is_white():
+                        letter = letter.lower()
+                    fen += letter
+            if no_piece_count > 0:
+                fen += str(no_piece_count)
+            fen += "/"
+        return fen[:-1], "KQkq"
+
+    def one_hot_encode(self, white_side=True):
+        material_to_one_hot = {
+            "pawn": [1, 0, 0, 0, 0, 0],
+            "bishop": [0, 1, 0, 0, 0, 0],
+            "knight": [0, 0, 1, 0, 0, 0],
+            "rook": [0, 0, 0, 1, 0, 0],
+            "queen": [0, 0, 0, 0, 1, 0],
+            "king": [0, 0, 0, 0, 0, 1]
+        }
+        one_hot_board = []
+        for line in self.board:
+            one_hot_line = []
+            for cell in line:
+                piece = cell.get_piece()
+                if piece is None:
+                    one_hot_line.append([0]*6)
+                else:
+                    one_hot_piece = material_to_one_hot[piece.type]
+                    if piece.is_white() != white_side:
+                        one_hot_piece = [-1*val for val in one_hot_piece]
+                    one_hot_line.append(one_hot_piece)
+            one_hot_board.append(one_hot_line)
+        return one_hot_board
 
     def get_cell(self, x, y):
         return self.board[x][y]
 
     def copy(self):
-        return copy.deepcopy(self)
+        return self.deepcopy()
 
     def reset(self):
         self.white_king, self.black_king, self.all_material = self._reset_board()
@@ -415,11 +552,7 @@ class Board:
             # ###print(boarder_line)
             whole_text += '\n'
             whole_text += boarder_line
-
-        if printing:
-            ###print(whole_text)
-            ###print('\n')
-            pass
+        print(whole_text)
         return whole_text
 
 
@@ -432,7 +565,8 @@ class Game:
         self.ai = ai
         if ai:
             # self.player2 = AIRandomPlayer(False)
-            self.player2 = EasyAIPlayer(False)
+            # self.player2 = EasyAIPlayer(False)
+            self.player2 = MyPlayer(white_side=False, path_to_model="./test1")
         else:
             self.player2 = Player(False)
         self.to_play_player = self.player1
@@ -447,6 +581,11 @@ class Game:
         self.board.reset()
         self.played_moves = []
         self.to_play_player = self.player1
+
+    def to_fen(self):
+        pieces, castling = self.board.to_fen()
+        color_playing = 'w' if self.to_play_player.is_white_side() else "b"
+        return pieces + " " + color_playing + " " + castling + " - 0 1"
 
     def is_finished(self):
         return self.status != 'ACTIVE'
@@ -540,10 +679,10 @@ class Game:
             self.board.draw()
         # self.save()
         if self.board.white_king.is_killed():
-            ###print('END OF THE GAME, BLACK HAS WON')
+            print('END OF THE GAME, BLACK HAS WON')
             return False, 'black'
         elif self.board.black_king.is_killed():
-            ###print('END OF THE GAME, WHITE HAS WON')
+            print('END OF THE GAME, WHITE HAS WON')
             return False, 'white'
 
         ###print('PLAYER TO PLAY:', self.to_play_player)
