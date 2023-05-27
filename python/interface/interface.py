@@ -1,4 +1,6 @@
+import numpy as np
 import os
+import time
 
 from kivy.app import App
 from kivy.uix.gridlayout import GridLayout
@@ -10,11 +12,8 @@ from kivy.uix.popup import Popup
 
 from kivy.graphics import Rectangle, Color, Canvas
 
-import numpy as np
-
 from engine.engine import Game
 
-import time
 
 
 class LoginScreen(GridLayout):
@@ -214,11 +213,8 @@ class TableScreen(GridLayout):
 class MyApp(App):
 
     def build(self):
-        game = Game(automatic_draw=False, ai=True)
+        game = Game(automatic_draw=False, ai=False)
         print('game created')
         return TableScreen(game)
 
-
-if __name__ == '__main__':
-    MyApp().run()
 
