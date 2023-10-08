@@ -52,6 +52,8 @@ class TableScreen(GridLayout):
 
         if game.ai:
             self.ai_playing = True
+        else:
+            self.ai_playing = False
 
         self.cols = 8
         self.rows = 8
