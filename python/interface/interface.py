@@ -181,8 +181,8 @@ class TableScreen(GridLayout):
             end_y = event.column
 
             print(self.game.player1, self.game.to_play_player)
-            validated_move, winner = self.game.move_from_coordinates(self.game.player1, start_x, start_y, end_x, end_y)
-            print('Validated move ?', validated_move, self.game.player1, start_x, start_y, end_x, end_y, winner)
+            validated_move, winner = self.game.move_from_coordinates(self.game.to_play_player, start_x, start_y, end_x, end_y)
+            print('Validated move ?', validated_move, self.game.to_play_player, start_x, start_y, end_x, end_y, winner)
 
             if validated_move:
                 self.update()
@@ -208,7 +208,12 @@ class TableScreen(GridLayout):
                 self.finish_game(winner)
                 return None
 
+            row, col = self.first_cell_clicked
+            self.cells[row][col].background_normal, self.cells[row][col].background_down = \
+                self.cells[row][event.column].background_down, self.cells[event.row][col].background_normal
             self.first_cell_clicked = None
+            self.cells[event.row][event.column].background_normal, self.cells[event.row][event.column].background_down = \
+                self.cells[event.row][event.column].background_down, self.cells[event.row][event.column].background_normal
 
 
 
