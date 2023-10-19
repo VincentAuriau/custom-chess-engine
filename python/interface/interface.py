@@ -219,8 +219,12 @@ class TableScreen(GridLayout):
 
 class MyApp(App):
 
-    def build(self, play_with_ai=False):
-        game = Game(automatic_draw=False, ai=play_with_ai)
+    def __init__(self, play_with_ai=False, **kwargs):
+        super().__init__(**kwargs)
+        self.play_with_ai = play_with_ai
+        
+    def build(self):
+        game = Game(automatic_draw=False, ai=self.play_with_ai)
         print('game created')
         return TableScreen(game)
 
