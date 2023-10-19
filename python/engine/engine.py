@@ -565,8 +565,8 @@ class Game:
         self.ai = ai
         if ai:
             # self.player2 = AIRandomPlayer(False)
-            # self.player2 = EasyAIPlayer(False)
-            self.player2 = MyPlayer(white_side=False, path_to_model="./test1")
+            self.player2 = EasyAIPlayer(False)
+            # self.player2 = MyPlayer(white_side=False, path_to_model="./test1")
         else:
             self.player2 = Player(False)
         self.to_play_player = self.player1
