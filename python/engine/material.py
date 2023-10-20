@@ -372,6 +372,21 @@ class Pawn(Piece):
 
 
 class Bishop(Piece):
+    """Base class for the bishop pieces
+
+    Implements the properties, attributes and functions specific to bishops.
+
+    Attributes
+    ----------
+    white : bool
+        Whether the piece is white or black.
+    x : int
+        x coordinate of piece on board
+    y : int
+        y coordinate of piece on board
+    killed: bool
+        Whether the piece has been killed by opponent or not. Initialized to False.
+    """
 
     type = "bishop"
 
@@ -450,6 +465,23 @@ class Bishop(Piece):
 
 
 class Rook(Piece):
+    """Base class for the rook pieces
+
+    Implements the properties, attributes and functions specific to rooks.
+
+    Attributes
+    ----------
+    white : bool
+        Whether the piece is white or black.
+    x : int
+        x coordinate of piece on board
+    y : int
+        y coordinate of piece on board
+    killed: bool
+        Whether the piece has been killed by opponent or not. Initialized to False.
+    has_moved: bool
+        Whether the piece has already moved during a game or not. Initialized to False.
+    """
 
     type = "rook"
 
@@ -528,6 +560,21 @@ class Rook(Piece):
 
 
 class Knight(Piece):
+    """Base class for the knoght pieces
+
+    Implements the properties, attributes and functions specific to knights.
+
+    Attributes
+    ----------
+    white : bool
+        Whether the piece is white or black.
+    x : int
+        x coordinate of piece on board
+    y : int
+        y coordinate of piece on board
+    killed: bool
+        Whether the piece has been killed by opponent or not. Initialized to False.
+    """
 
     type = "knight"
 
@@ -565,6 +612,21 @@ class Knight(Piece):
 
 
 class Queen(Piece):
+    """Base class for the queen pieces
+
+    Implements the properties, attributes and functions specific to queens.
+
+    Attributes
+    ----------
+    white : bool
+        Whether the piece is white or black.
+    x : int
+        x coordinate of piece on board
+    y : int
+        y coordinate of piece on board
+    killed: bool
+        Whether the piece has been killed by opponent or not. Initialized to False.
+    """
 
     type = "queen"
 
@@ -676,6 +738,25 @@ class Queen(Piece):
 
 
 class King(Piece):
+    """Base class for the king pieces
+
+    Implements the properties, attributes and functions specific to kings.
+
+    Attributes
+    ----------
+    white : bool
+        Whether the piece is white or black.
+    x : int
+        x coordinate of piece on board
+    y : int
+        y coordinate of piece on board
+    killed: bool
+        Whether the piece has been killed by opponent or not. Initialized to False
+    has_moved: bool
+        Whether the piece has already moved during a game or not. Initialized to False
+    castling_done: bool
+        Whether the piece has already realized castling. Initialized to False.
+    """
 
     type = "king"
 
