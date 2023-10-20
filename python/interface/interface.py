@@ -192,7 +192,6 @@ class TableScreen(GridLayout):
                     print('Time for AI')
                     ai_move = self.game.player2.time_to_play(self.game.board)
                     self.game.board.draw()
-                    print(self.game.player2.memory.memory)
                     game_is_on = self.game.move(ai_move, self.game.player2)
 
                     if game_is_on[0]:
