@@ -4,7 +4,7 @@ from engine.color import Color
 
 
 class Piece(object):
- """Base class for the different materials on the board.
+    """Base class for the different materials on the board.
 
     Implements the properties, attributes and functions shared by all the different materials.
 
