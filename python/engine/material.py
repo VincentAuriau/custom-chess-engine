@@ -1,9 +1,39 @@
+from abc import abstractmethod
+
 from engine.color import Color
 
 
 class Piece(object):
+ """Base class for the different materials on the board.
+
+    Implements the properties, attributes and functions shared by all the different materials.
+
+    Attributes
+    ----------
+    white : bool
+        Whether the piece is white or black.
+    x : int
+        x coordinate of piece on board
+    y : int
+        y coordinate of piece on board
+    killed: bool
+        Whether the piece has been killed by opponent or not. Initialized as False
+
+    """
 
     def __init__(self, white, x, y):
+        """Initialization of piece.
+
+        Parameters
+        ----------
+        white : bool
+            Whether the piece is white or black.
+        x : int
+            initial x coordinate of piece on board
+        y : int
+            initial y coordinate of piece on board
+
+        """
         self.white = white
         self.killed = False
 
@@ -11,36 +41,123 @@ class Piece(object):
         self.y = y
 
     def piece_deepcopy(self):
+        """Method to create an uncorrelated clone of the piece.
+
+        Returns
+        -------
+        Piece
+            Exact copy of self.
+
+        """
         copied_piece = Piece(self.white, self.x, self.y)
         copied_piece.killed = self.killed
         return copied_piece
 
     def is_white(self):
+        """Method to access the piece color.
+
+        Returns
+        -------
+        bool
+            color of piece.
+
+        """
         return self.white
 
     def is_killed(self):
+        """Method to access the piece status (killed or not).
+
+        Returns
+        -------
+        bool
+            status of piece.
+
+        """
         return self.killed
 
     def set_killed(self):
+        """Sets the piece status to killed.
+        """
         self.killed = True
 
+    @abstractmethod
     def piece_move_authorized(self, start, end):
+        """Method to verify if is a move is authorized in terms of movements.
+
+        Parameters
+        ----------
+        start: tuple
+            (x, y) coordinates of the starting square (current coordinates).
+        end: tuple
+            (x, y) coordinates of the landing square
+
+        Returns
+        -------
+        bool
+            Whether the movement is authorized by the piece possibilities or not.
+        """
         if start.get_x() == end.get_x() and start.get_y() == end.get_y():
             return False
         else:
             return True
 
     def can_move(self, board, move):
+        """Method to verify if is a move is authorized in terms of movements.
+
+        Parameters
+        ----------
+        board: engine.Board
+            Board to which the piece belongs to and on which the movement is tested
+        move: engine.Move
+            Move object to be tested
+
+        Returns
+        -------
+        bool
+            Whether the movement is authorized by the piece possibilities or not.
+        """
+
         is_movement_authorized = self.piece_move_authorized(move.start, move.end)
         return is_movement_authorized
 
+    @abstractmethod
     def get_potential_moves(self, x, y):
+        """Method to list all the possible moves from coordinates. Only uses authorized movements, no other pieces on a
+        board.
+
+        Parameters
+        ----------
+        x: int
+            x coordinate of the piece
+        y: int
+            y coordinate of the piece
+
+        Returns
+        -------
+        bool
+            List of authorized moves
+        """
         return None
 
+    @abstractmethod
     def get_str(self):
+        """Method to represent the piece as a string.
+
+        Returns
+        -------
+        str
+            String representation of the piece
+        """
         return '     '
 
     def draw(self):
+        """Method to represent the piece as a colored string in order to draw a board.
+
+        Returns
+        -------
+        str
+            Colored representation of the piece within a board.
+        """
         value = self.get_str()
         if self.is_white():
             return Color.GREEN + value + Color.WHITE
