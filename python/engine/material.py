@@ -22,7 +22,7 @@ class Piece(object):
     """
 
     def __init__(self, white, x, y):
-        """Initialization of piece.
+        """Initialization of the piece.
 
         Parameters
         ----------
@@ -40,6 +40,7 @@ class Piece(object):
         self.x = x
         self.y = y
 
+    @abstractmethod
     def piece_deepcopy(self):
         """Method to create an uncorrelated clone of the piece.
 
@@ -86,10 +87,10 @@ class Piece(object):
 
         Parameters
         ----------
-        start: tuple
-            (x, y) coordinates of the starting square (current coordinates).
-        end: tuple
-            (x, y) coordinates of the landing square
+        start: engine.Cell
+            Starting cell for movement check (current cell of piece).
+        end: engine.Cell
+            Landing cell for movement check.
 
         Returns
         -------
@@ -166,15 +167,53 @@ class Piece(object):
 
 
 class Pawn(Piece):
+    """Base class for the pawns pieces
+
+    Implements the properties, attributes and functions specific to pawns.
+
+    Attributes
+    ----------
+    white : bool
+        Whether the piece is white or black.
+    x : int
+        x coordinate of piece on board
+    y : int
+        y coordinate of piece on board
+    killed: bool
+        Whether the piece has been killed by opponent or not. Initialized to False
+    has_moved: bool
+        Whether the piece has already moved during a game or not. Initialized to False
+    last_move_is_double: bool
+        Whether the piece previous move was a double advance or not. For future En Passant checks. Initialized to False.
+    """
 
     type = "pawn"
 
     def __init__(self, *args, **kwargs):
+        """Initialization of the pawn.
+
+        Parameters
+        ----------
+        white : bool
+            Whether the piece is white or black.
+        x : int
+            initial x coordinate of piece on board
+        y : int
+            initial y coordinate of piece on board
+
+        """
         super().__init__(*args, **kwargs)
         self.has_moved = False  # if the pawn has yet been moved or not to keep ?
         self.last_move_is_double = False  # check for en passant, if last move was a double tap
 
     def piece_deepcopy(self):
+        """Method to create an uncorrelated clone of the piece.
+
+        Returns
+        -------
+        Pawn
+            Exact copy of self.
+        """
         copied_piece = Pawn(self.white, self.x, self.y)
         copied_piece.killed = self.killed
         copied_piece.has_moved = self.has_moved
@@ -182,12 +221,27 @@ class Pawn(Piece):
         return copied_piece
 
     def piece_move_authorized(self, start, end):
+        """Method to verify if is a move is authorized in terms of movements.
+
+        Parameters
+        ----------
+        start: engine.Cell
+            Starting cell for movement check (current cell).
+        end: engine.Cell
+            Landing cell for movement check.
+
+        Returns
+        -------
+        bool
+            Whether the movement is authorized by the piece possibilities or not.
+        """
+        # Check if there is a piece on the landing cell
         if end.get_piece() is not None:
+
             # check if there is not another piece of same color
-            ###print(end.get_piece(), start.get_piece())
             if end.get_piece().is_white() == self.is_white():
-                ###print("PAWN TAKING PIECE OF SAME COLOR")
                 return False
+
             else:
                 # Pawn can only take an adversary piece in diagonal
                 dx = end.get_x() - start.get_x()
@@ -197,9 +251,9 @@ class Pawn(Piece):
                 elif dx == -1 and abs(dy) == 1 and not self.is_white():
                     return True
                 else:
-                    ###print("PAWN NOT TAKING OTHER PIECE IN DIAGONAL")
                     return False
 
+        # No piece on landing cell, just checking if movement is authorized.
         else:
             dx = end.get_x() - start.get_x()
             dy = end.get_y() - start.get_y()
@@ -209,17 +263,31 @@ class Pawn(Piece):
                 return True
 
             else:
+                # Initial move authorized to be two cells at once. Should check self.has_moved here ?
                 if start.get_x() == 1 and dx == 2 and dy == 0 and self.is_white():
                     return True
                 elif start.get_x() == 6 and dx == -2 and dy == 0 and not self.is_white():
                     return True
                 else:
-                    ###print("PAWN MOVE NOT AUTHORIZED WITH DX %i and DY %i" %(dx, dy))
                     return False
 
     def can_move(self, board, move):
+        """Method to verify if is a move is authorized in terms of movements.
+
+        Parameters
+        ----------
+        board: engine.Board
+            Board to which the piece belongs to and on which the movement is tested
+        move: engine.Move
+            Move object to be tested
+
+        Returns
+        -------
+        bool
+            Whether the movement is authorized by the piece possibilities or not.
+        """
         authorized_move = self.piece_move_authorized(move.start, move.end)
-        ###print("move authorized ?", authorized_move)
+
         if not authorized_move:
             """to remove ?"""
             crossed_cell = board.get_cell(move.start.get_x(), move.end.get_y())
@@ -230,15 +298,14 @@ class Pawn(Piece):
                     authorized_move = True
                     move.complementary_passant = crossed_cell
         else:
+            # Checks that no piece (friend or foe) is blocking the cell(s) in front.
             dx = move.end.get_x() - move.start.get_x()
 
             if dx > 1:
                 if board.get_cell(move.start.get_x()+1, move.start.get_y()).get_piece() is not None:
-                    ###print('Pawn line of sight blocked')
                     return False
             elif dx < -1:
                 if board.get_cell(move.start.get_x()-1, move.start.get_y()).get_piece() is not None:
-                    ###print('Pawn line of sight blocked')
                     return False
         """
         if move.end.get_x() == 7 and self.is_white():
@@ -249,16 +316,38 @@ class Pawn(Piece):
         return authorized_move
 
     def get_potential_moves(self, x, y):
+        """Method to list all the possible moves from coordinates. Only uses authorized movements, no other pieces on a
+        board.
+
+        Parameters
+        ----------
+        x: int
+            x coordinate of the piece
+        y: int
+            y coordinate of the piece
+
+        Returns
+        -------
+        bool
+            List of authorized moves
+        """
+
         possible_moves = []
         if self.is_white():
+            # Front cell
             possible_moves.append((x + 1, y))
+
+            # Diagonal cells
             if y - 1 >= 0:
                 possible_moves.append((x + 1, y - 1))
             if y + 1 <= 7:
                 possible_moves.append((x + 1, y + 1))
 
+            # Double front cell
             if x == 1:
                 possible_moves.append((x + 2, y))
+
+        # Symmetric for black pawns
         else:
             possible_moves.append((x - 1, y))
 
@@ -272,6 +361,13 @@ class Pawn(Piece):
         return possible_moves
 
     def get_str(self):
+        """Method to represent the piece as a string.
+
+        Returns
+        -------
+        str
+            String representation of the piece
+        """
         return '  P  '
 
 
