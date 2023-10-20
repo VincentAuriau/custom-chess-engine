@@ -47,7 +47,7 @@ class TableScreen(GridLayout):
 
     def __init__(self, game, **kwargs):
         super(TableScreen, self).__init__(**kwargs)
-        self.path_to_illustrations = 'own_illustrations'
+        self.path_to_illustrations = 'illustrations'
         self.game = game
 
         if game.ai:
