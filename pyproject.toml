@@ -13,8 +13,6 @@ requires-python = ">=3.8"
 
 [tool.setuptools]
 packages = [
-  "lib",
-  "config",
   "tests",
   "python"
 ]
