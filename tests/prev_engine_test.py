@@ -1,6 +1,7 @@
 import sys
 
 sys.path.append("../python")
+sys.path.append("python")
 
 import engine.engine as engine
 import importlib
