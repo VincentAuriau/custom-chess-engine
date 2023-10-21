@@ -5,6 +5,7 @@ sys.path.append("python")
 
 import engine.engine as engine
 
+
 def test_blocked_moves():
     """
     Test that a blocked move does not happen.
