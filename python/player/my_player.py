@@ -15,7 +15,7 @@ class Memory(object):
 
     def remember(self, m):
         self.memory.append(m)
-        self.memory = self.memory[max(len(self.memory)- self.max_memory, 0):]
+        self.memory = self.memory[max(len(self.memory) - self.max_memory, 0) :]
 
     def random_access(self):
         rn = np.random.randint(0, max(len(self.memory), 1))
@@ -23,7 +23,6 @@ class Memory(object):
 
 
 class MyPlayer(Player):
-
     def __init__(self, path_to_model="", epsilon_explorer=0.15, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.color = "white" if self.white_side else "black"
@@ -45,11 +44,11 @@ class MyPlayer(Player):
 
         if not os.path.exists(path_to_model):
             self.model = tf.keras.Model(inputs=in_, outputs=out)
-            self.model.compile(loss='mse', optimizer="Adam")
+            self.model.compile(loss="mse", optimizer="Adam")
         else:
             print("Loading Model")
             self.model = tf.keras.models.load_model(path_to_model)
-            self.model.compile(loss='mse', optimizer="Adam")
+            self.model.compile(loss="mse", optimizer="Adam")
             print("Model Loaded")
         print(self.model.summary())
         self.memory = Memory()
@@ -63,9 +62,10 @@ class MyPlayer(Player):
         if self.white_side != white_side:
             one_hot_encode_board = np.flip(one_hot_encode_board)
 
-        score = self.model.predict(np.expand_dims(one_hot_encode_board, 0).astype('float32'))
+        score = self.model.predict(
+            np.expand_dims(one_hot_encode_board, 0).astype("float32")
+        )
         return score[0][0]
-
 
     def _get_possible_moves(self, board, is_white=None):
         if is_white is None:
@@ -77,16 +77,19 @@ class MyPlayer(Player):
             for piece in board.all_material[color]["alive"][type_piece]:
                 piece_available_moves = piece.get_potential_moves(piece.x, piece.y)
                 for mv in piece_available_moves:
-                    selected_move = move.Move(self, board, board.get_cell(piece.x, piece.y),
-                                              board.get_cell(mv[0], mv[1]))
+                    selected_move = move.Move(
+                        self,
+                        board,
+                        board.get_cell(piece.x, piece.y),
+                        board.get_cell(mv[0], mv[1]),
+                    )
                     if selected_move.is_possible_move():
                         possible_moves.append(selected_move)
         return possible_moves
 
     def _select_move_from_score(self, moves, train=True):
-
         if train:
-            do_random_move = (np.random.randint(100) <= self.epsilon_explorer * 100)
+            do_random_move = np.random.randint(100) <= self.epsilon_explorer * 100
             if do_random_move:
                 print("RANDOM MOVE SELECTED")
                 index_random_move = np.random.randint(len(moves))
@@ -119,18 +122,18 @@ class MyPlayer(Player):
             "bishop": 30,
             "rook": 50,
             "queen": 90,
-            "king": 900
+            "king": 900,
         }
         piece_positions_weights = {
             "pawn": [
-                [0.]*8,
-                [5.0]*8,
+                [0.0] * 8,
+                [5.0] * 8,
                 [1.0, 1.0, 2.0, 3.0, 3.0, 2.0, 1.0, 1.0],
                 [0.5, 0.5, 1.0, 2.5, 2.5, 1.0, 0.5, 0.5],
                 [0.0, 0.0, 0.0, 2.0, 2.0, 0.0, 0.0, 0.0],
                 [0.5, -0.5, -1.0, 0.0, 0.0, -1.0, -0.5, 0.5],
                 [0.5, 1.0, 1.0, -2.0, -2.0, 1.0, 1.0, 0.5],
-                [0.]*8
+                [0.0] * 8,
             ],
             "bishop": [
                 [-2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0],
@@ -140,7 +143,7 @@ class MyPlayer(Player):
                 [-1.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, -1.0],
                 [-1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, -1.0],
                 [-1.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.5, -1.0],
-                [-2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0]
+                [-2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0],
             ],
             "knight": [
                 [-5.0, -4.0, -3.0, -3.0, -3.0, -3.0, -4.0, -5.0],
@@ -150,7 +153,7 @@ class MyPlayer(Player):
                 [-3.0, 0.0, 1.5, 2.0, 2.0, 1.5, 0.0, -3.0],
                 [-3.0, 0.5, 1.0, 1.5, 1.5, 1.0, 0.5, -3.0],
                 [-4.0, -2.0, 0.0, 0.5, 0.5, 0.0, -2.0, -4.0],
-                [-5.0, -4.0, -3.0, -3.0, -3.0, -3.0, -4.0, -5.0]
+                [-5.0, -4.0, -3.0, -3.0, -3.0, -3.0, -4.0, -5.0],
             ],
             "rook": [
                 [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
@@ -160,7 +163,7 @@ class MyPlayer(Player):
                 [-0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5],
                 [-0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5],
                 [-0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5],
-                [0.0, 0.0, 0.0, 0.5, 0.5, 0.0, 0.0, 0.0]
+                [0.0, 0.0, 0.0, 0.5, 0.5, 0.0, 0.0, 0.0],
             ],
             "queen": [
                 [-2.0, -1.0, -1.0, -0.5, -0.5, -1.0, -1.0, -2.0],
@@ -170,7 +173,7 @@ class MyPlayer(Player):
                 [0.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.0, 0.0],
                 [-1.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -1.0],
                 [-1.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0],
-                [-2.0, -1.0, -1.0, -0.5, -0.5, -1.0, -1.0, -2.0]
+                [-2.0, -1.0, -1.0, -0.5, -0.5, -1.0, -1.0, -2.0],
             ],
             "king": [
                 [-3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0],
@@ -180,18 +183,18 @@ class MyPlayer(Player):
                 [-2.0, -3.0, -3.0, -4.0, -4.0, -3.0, -3.0, -2.0],
                 [-1.0, -2.0, -2.0, -2.0, -2.0, -2.0, -2.0, -1.0],
                 [2.0, 2.0, 0.0, 0.0, 0.0, 0.0, 2.0, 2.0],
-                [2.0, 3.0, 1.0, 0.0, 0.0, 1.0, 3.0, 2.0]
-            ]
+                [2.0, 3.0, 1.0, 0.0, 0.0, 1.0, 3.0, 2.0],
+            ],
         }
 
         score = 0
-        for piece_type in board.all_material["white"]['alive'].keys():
-            for piece in board.all_material["white"]['alive'][piece_type]:
+        for piece_type in board.all_material["white"]["alive"].keys():
+            for piece in board.all_material["white"]["alive"][piece_type]:
                 score += piece_weights[piece_type]
                 score += np.flip(piece_positions_weights[piece_type])[piece.x][piece.y]
 
-        for piece_type in board.all_material["black"]['alive'].keys():
-            for piece in board.all_material["black"]['alive'][piece_type]:
+        for piece_type in board.all_material["black"]["alive"].keys():
+            for piece in board.all_material["black"]["alive"][piece_type]:
                 score -= piece_weights[piece_type]
                 score -= piece_positions_weights[piece_type][piece.x][piece.y]
         if not white_side:
@@ -220,9 +223,8 @@ class MyPlayer(Player):
         self.model.train_on_batch(input_states, target_q)
         self.model.save(self.path_to_model)
 
-
     def __str__(self):
-        return 'MyAIPlayer'
+        return "MyAIPlayer"
 
     def time_to_play(self, board, white_side=None):
         if white_side is None:

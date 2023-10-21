@@ -77,8 +77,7 @@ class Piece(object):
         return self.killed
 
     def set_killed(self):
-        """Sets the piece status to killed.
-        """
+        """Sets the piece status to killed."""
         self.killed = True
 
     @abstractmethod
@@ -149,7 +148,7 @@ class Piece(object):
         str
             String representation of the piece
         """
-        return '     '
+        return "     "
 
     def draw(self):
         """Method to represent the piece as a colored string in order to draw a board.
@@ -204,7 +203,9 @@ class Pawn(Piece):
         """
         super().__init__(*args, **kwargs)
         self.has_moved = False  # if the pawn has yet been moved or not to keep ?
-        self.last_move_is_double = False  # check for en passant, if last move was a double tap
+        self.last_move_is_double = (
+            False  # check for en passant, if last move was a double tap
+        )
 
     def piece_deepcopy(self):
         """Method to create an uncorrelated clone of the piece.
@@ -237,7 +238,6 @@ class Pawn(Piece):
         """
         # Check if there is a piece on the landing cell
         if end.get_piece() is not None:
-
             # check if there is not another piece of same color
             if end.get_piece().is_white() == self.is_white():
                 return False
@@ -266,7 +266,9 @@ class Pawn(Piece):
                 # Initial move authorized to be two cells at once. Should check self.has_moved here ?
                 if start.get_x() == 1 and dx == 2 and dy == 0 and self.is_white():
                     return True
-                elif start.get_x() == 6 and dx == -2 and dy == 0 and not self.is_white():
+                elif (
+                    start.get_x() == 6 and dx == -2 and dy == 0 and not self.is_white()
+                ):
                     return True
                 else:
                     return False
@@ -293,7 +295,10 @@ class Pawn(Piece):
             crossed_cell = board.get_cell(move.start.get_x(), move.end.get_y())
             crossed_piece = crossed_cell.get_piece()
             if isinstance(crossed_piece, Pawn):
-                if crossed_piece.last_move_is_double and crossed_piece.is_white() != self.is_white():
+                if (
+                    crossed_piece.last_move_is_double
+                    and crossed_piece.is_white() != self.is_white()
+                ):
                     # Revoir comment on update cet attribut last_move_is_double
                     authorized_move = True
                     move.complementary_passant = crossed_cell
@@ -302,10 +307,20 @@ class Pawn(Piece):
             dx = move.end.get_x() - move.start.get_x()
 
             if dx > 1:
-                if board.get_cell(move.start.get_x()+1, move.start.get_y()).get_piece() is not None:
+                if (
+                    board.get_cell(
+                        move.start.get_x() + 1, move.start.get_y()
+                    ).get_piece()
+                    is not None
+                ):
                     return False
             elif dx < -1:
-                if board.get_cell(move.start.get_x()-1, move.start.get_y()).get_piece() is not None:
+                if (
+                    board.get_cell(
+                        move.start.get_x() - 1, move.start.get_y()
+                    ).get_piece()
+                    is not None
+                ):
                     return False
         """
         if move.end.get_x() == 7 and self.is_white():
@@ -371,7 +386,7 @@ class Pawn(Piece):
         str
             String representation of the piece
         """
-        return '  P  '
+        return "  P  "
 
 
 class Bishop(Piece):
@@ -541,7 +556,7 @@ class Bishop(Piece):
         str
             String representation of the piece
         """
-        return '  B  '
+        return "  B  "
 
 
 class Rook(Piece):
@@ -715,7 +730,7 @@ class Rook(Piece):
         str
             String representation of the piece
         """
-        return '  R  '
+        return "  R  "
 
 
 class Knight(Piece):
@@ -813,7 +828,7 @@ class Knight(Piece):
         str
             String representation of the piece
         """
-        return '  N  '
+        return "  N  "
 
     def get_potential_moves(self, x, y):
         """Method to list all the possible moves from coordinates. Only uses authorized movements, no other pieces on a
@@ -834,10 +849,19 @@ class Knight(Piece):
         possible_moves = []
 
         # All difference position that a knight can move to
-        combos = [(2, 1), (1, 2), (-2, 1), (2, -1), (-2, -1), (-1, 2), (1, -2), (-1, -2)]
+        combos = [
+            (2, 1),
+            (1, 2),
+            (-2, 1),
+            (2, -1),
+            (-2, -1),
+            (-1, 2),
+            (1, -2),
+            (-1, -2),
+        ]
         for nx, ny in combos:
-            if 0 <= nx+x <= 7 and 0 <= ny+y <= 7:
-                possible_moves.append((x+nx, y+ny))
+            if 0 <= nx + x <= 7 and 0 <= ny + y <= 7:
+                possible_moves.append((x + nx, y + ny))
 
         return possible_moves
 
@@ -943,13 +967,19 @@ class Queen(Piece):
                 for i in range(1, abs(dx)):
                     x_trajectory = i * int(dx / abs(dx)) + move.start.get_x()
                     y_trajectory = move.start.get_y()
-                    if board.get_cell(x_trajectory, y_trajectory).get_piece() is not None:
+                    if (
+                        board.get_cell(x_trajectory, y_trajectory).get_piece()
+                        is not None
+                    ):
                         return False
                 # Along Y-axis
                 for i in range(1, abs(dy)):
                     x_trajectory = move.start.get_x()
                     y_trajectory = i * int(dy / abs(dy)) + move.start.get_y()
-                    if board.get_cell(x_trajectory, y_trajectory).get_piece() is not None:
+                    if (
+                        board.get_cell(x_trajectory, y_trajectory).get_piece()
+                        is not None
+                    ):
                         return False
                 return True
 
@@ -958,7 +988,10 @@ class Queen(Piece):
                 for i in range(1, abs(dx)):
                     x_trajectory = i * int(dx / abs(dx)) + move.start.get_x()
                     y_trajectory = i * int(dy / abs(dy)) + move.start.get_y()
-                    if board.get_cell(x_trajectory, y_trajectory).get_piece() is not None:
+                    if (
+                        board.get_cell(x_trajectory, y_trajectory).get_piece()
+                        is not None
+                    ):
                         return False
                 return True
         else:
@@ -1048,7 +1081,7 @@ class Queen(Piece):
         str
             String representation of the piece
         """
-        return '  Q  '
+        return "  Q  "
 
 
 class King(Piece):
@@ -1161,11 +1194,13 @@ class King(Piece):
                 return True
         # If move is not authorized it could mean that player is trying to do a special move, i.e. castling
         else:
-
             # Checking castling conditions on the right then on the left
-            if not self.castling_done and not self.has_moved and (move.end.y == 6 or move.end.y == 2):
+            if (
+                not self.castling_done
+                and not self.has_moved
+                and (move.end.y == 6 or move.end.y == 2)
+            ):
                 if move.end.y == 6:  # Roque vers la droite
-
                     # Getting the rook for castling
                     rook_to_move = board.get_cell(move.start.x, 7).get_piece()
                     rook_starting_coordinates = (move.start.x, 7)
@@ -1173,10 +1208,15 @@ class King(Piece):
 
                     # Listing cells that must not have material on
                     if isinstance(rook_to_move, Rook):
-                        must_be_empty_cells = [board.get_cell(move.start.x, 5), board.get_cell(move.start.x, 6)]
-                        must_not_be_threatened_cells = [board.get_cell(move.start.x, 4),
-                                                        board.get_cell(move.start.x, 5),
-                                                        board.get_cell(move.start.x, 6)]
+                        must_be_empty_cells = [
+                            board.get_cell(move.start.x, 5),
+                            board.get_cell(move.start.x, 6),
+                        ]
+                        must_not_be_threatened_cells = [
+                            board.get_cell(move.start.x, 4),
+                            board.get_cell(move.start.x, 5),
+                            board.get_cell(move.start.x, 6),
+                        ]
                     else:
                         return False
 
@@ -1187,13 +1227,17 @@ class King(Piece):
 
                     # Getting the rook
                     if isinstance(rook_to_move, Rook):
-
-                    # Listing cells that must not have material on
-                        must_be_empty_cells = [board.get_cell(move.start.x, 1), board.get_cell(move.start.x, 2),
-                                               board.get_cell(move.start.x, 3)]
-                        must_not_be_threatened_cells = [board.get_cell(move.start.x, 2),
-                                                        board.get_cell(move.start.x, 3),
-                                                        board.get_cell(move.start.x, 4)]
+                        # Listing cells that must not have material on
+                        must_be_empty_cells = [
+                            board.get_cell(move.start.x, 1),
+                            board.get_cell(move.start.x, 2),
+                            board.get_cell(move.start.x, 3),
+                        ]
+                        must_not_be_threatened_cells = [
+                            board.get_cell(move.start.x, 2),
+                            board.get_cell(move.start.x, 3),
+                            board.get_cell(move.start.x, 4),
+                        ]
                     else:
                         return False
 
@@ -1212,16 +1256,25 @@ class King(Piece):
 
                 # Verify that all conditions are met and completes the move so that it has the full castling information
                 # to operate all the movements
-                conditions_to_castling = [not rook_to_move.has_moved, empty_cells_check, not_threatened_cells]
+                conditions_to_castling = [
+                    not rook_to_move.has_moved,
+                    empty_cells_check,
+                    not_threatened_cells,
+                ]
                 if all(conditions_to_castling):
-                    move.complementary_castling = rook_to_move,  board.get_cell(rook_starting_coordinates[0],
-                                                                                rook_starting_coordinates[1]), \
-                                                  board.get_cell(rook_ending_coordinates[0], rook_ending_coordinates[1])
+                    move.complementary_castling = (
+                        rook_to_move,
+                        board.get_cell(
+                            rook_starting_coordinates[0], rook_starting_coordinates[1]
+                        ),
+                        board.get_cell(
+                            rook_ending_coordinates[0], rook_ending_coordinates[1]
+                        ),
+                    )
                     return True
                 else:
                     return False
             return False
-
 
     def get_potential_moves(self, x, y):
         """Method to list all the possible moves from coordinates. Only uses authorized movements, no other pieces on a
@@ -1244,8 +1297,8 @@ class King(Piece):
         # All possible moves
         combos = [(1, 0), (1, 1), (-1, 1), (1, -1), (-1, -1), (0, 1), (0, -1), (-1, 0)]
         for nx, ny in combos:
-            if 0 <= x+nx <= 7 and 0 <= y+ny <= 7:
-                possible_moves.append((nx+x, ny+y))
+            if 0 <= x + nx <= 7 and 0 <= y + ny <= 7:
+                possible_moves.append((nx + x, ny + y))
 
         # Add castling as potential moves if not done yet
         if not self.has_moved:
@@ -1262,7 +1315,7 @@ class King(Piece):
         str
             String representation of the piece
         """
-        return '  K  '
+        return "  K  "
 
     def is_checked(self, board):
         """Method to verify that the king at its current position is not threatened / checked by opponent material.
@@ -1296,4 +1349,3 @@ class King(Piece):
     #
     #                         if verified_move:
     #                             copied_board = board.copy()
-
