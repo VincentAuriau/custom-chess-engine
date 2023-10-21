@@ -1,44 +1,47 @@
 import sys
+
 sys.path.append("../python")
 
 import engine.engine as engine
 import importlib
 import engine.move as move
 import time
+
 importlib.reload(engine)
 import player.ai_player as ai_player
+
 
 def test_working_castling():
     game = engine.Game()
     game.move_from_coordinates(game.player1, 1, 4, 3, 4)
-    print("///", game.board.all_material['black']['alive']['king'][0].has_moved)
+    print("///", game.board.all_material["black"]["alive"]["king"][0].has_moved)
     game.move_from_coordinates(game.player2, 6, 4, 4, 4)
-    print("///", game.board.all_material['black']['alive']['king'][0].has_moved)
+    print("///", game.board.all_material["black"]["alive"]["king"][0].has_moved)
     game.move_from_coordinates(game.player1, 0, 5, 3, 2)
-    print("///", game.board.all_material['black']['alive']['king'][0].has_moved)
+    print("///", game.board.all_material["black"]["alive"]["king"][0].has_moved)
     game.move_from_coordinates(game.player2, 7, 3, 4, 6)
-    print("///", game.board.all_material['black']['alive']['king'][0].has_moved)
+    print("///", game.board.all_material["black"]["alive"]["king"][0].has_moved)
     game.move_from_coordinates(game.player1, 0, 6, 2, 5)
-    print("///", game.board.all_material['black']['alive']['king'][0].has_moved)
+    print("///", game.board.all_material["black"]["alive"]["king"][0].has_moved)
     game.move_from_coordinates(game.player2, 7, 1, 5, 2)
-    print("///", game.board.all_material['black']['alive']['king'][0].has_moved)
+    print("///", game.board.all_material["black"]["alive"]["king"][0].has_moved)
 
     # small castling move
     game.move_from_coordinates(game.player1, 0, 4, 0, 6)
-    print("///", game.board.all_material['black']['alive']['king'][0].has_moved)
+    print("///", game.board.all_material["black"]["alive"]["king"][0].has_moved)
 
     game.move_from_coordinates(game.player2, 6, 3, 5, 3)
-    print("///", game.board.all_material['black']['alive']['king'][0].has_moved)
+    print("///", game.board.all_material["black"]["alive"]["king"][0].has_moved)
     game.move_from_coordinates(game.player1, 0, 1, 2, 2)
-    print("///", game.board.all_material['black']['alive']['king'][0].has_moved)
+    print("///", game.board.all_material["black"]["alive"]["king"][0].has_moved)
     game.move_from_coordinates(game.player2, 7, 2, 6, 3)
-    print("///", game.board.all_material['black']['alive']['king'][0].has_moved)
+    print("///", game.board.all_material["black"]["alive"]["king"][0].has_moved)
     game.move_from_coordinates(game.player1, 0, 3, 1, 4)
-    print("///", game.board.all_material['black']['alive']['king'][0].has_moved)
+    print("///", game.board.all_material["black"]["alive"]["king"][0].has_moved)
 
     # big castling move
-    print('big castling')
-    print("///", game.board.all_material['black']['alive']['king'][0].has_moved)
+    print("big castling")
+    print("///", game.board.all_material["black"]["alive"]["king"][0].has_moved)
     game.move_from_coordinates(game.player2, 7, 4, 7, 2)
     game.draw_board()
 
@@ -99,12 +102,14 @@ def test_pawn_transformation():
     game.move_from_coordinates(game.player1, 1, 5, 2, 5)
     game.move_from_coordinates(game.player2, 1, 4, 0, 4)
 
+
 def check_unchecking():
     game = engine.Game()
     game.move_from_coordinates(game.player1, 1, 4, 3, 4)
     game.move_from_coordinates(game.player2, 6, 5, 4, 5)
     game.move_from_coordinates(game.player1, 0, 3, 4, 7)
     game.move_from_coordinates(game.player2, 6, 6, 5, 6)
+
 
 def test_blocked_double_pawn():
     game = engine.Game()
@@ -114,6 +119,7 @@ def test_blocked_double_pawn():
     game.move_from_coordinates(game.player2, 4, 5, 3, 5)
     game.move_from_coordinates(game.player1, 4, 4, 5, 4)
     game.move_from_coordinates(game.player2, 6, 4, 4, 4)
+
 
 def test_king_taking_queen():
     game = engine.Game()
@@ -129,6 +135,7 @@ def test_king_taking_queen():
     game.move_from_coordinates(game.player2, 6, 1, 5, 1)
     game.move_from_coordinates(game.player1, 7, 6, 7, 5)
     game.move_from_coordinates(game.player2, 7, 4, 7, 5)
+
 
 def specific_test():
     game = engine.Game()
@@ -169,12 +176,18 @@ def possible_moves():
         print(piece_available_moves)
         for mv in piece_available_moves:
             print(mv)
-            selected_move = move.Move(game.player1, game.board, game.board.get_cell(piece.x, piece.y),
-                                      game.board.get_cell(mv[0], mv[1]))
+            selected_move = move.Move(
+                game.player1,
+                game.board,
+                game.board.get_cell(piece.x, piece.y),
+                game.board.get_cell(mv[0], mv[1]),
+            )
             if selected_move.is_possible_move():
                 print("move ok")
             else:
                 print("move not ok")
+
+
 def test_player():
     player = ai_player.EasyAIPlayer(False)
     game = engine.Game()
@@ -189,9 +202,7 @@ def test_player():
     print(score)
 
 
-
-
-if __name__ == '__main__':
+if __name__ == "__main__":
     check_unchecking()
     test_working_castling()
     test_failing_castling()
@@ -204,7 +215,8 @@ if __name__ == '__main__':
     specific_test()
     possible_moves()
     test_player()
-    print('Tests finished')
+    print("Tests finished")
 
     import sys
+
     print(sys.executable)

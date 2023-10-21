@@ -22,8 +22,12 @@ class Move:
 
     def deepcopy(self):
         copied_board = self.board.deepcopy()
-        copied_move = Move(self.player, copied_board, copied_board.get_cell(self.start.x, self.start.y),
-                           copied_board.get_cell(self.end.x, self.end.y))
+        copied_move = Move(
+            self.player,
+            copied_board,
+            copied_board.get_cell(self.start.x, self.start.y),
+            copied_board.get_cell(self.end.x, self.end.y),
+        )
         copied_move.is_castling = self.is_castling
         copied_move.complementary_castling = self.complementary_castling
         copied_move.en_passant = self.en_passant
@@ -31,11 +35,11 @@ class Move:
         return copied_move
 
     def _set_moved_attribute(self):
-        if hasattr(self.moved_piece, 'has_moved'):
+        if hasattr(self.moved_piece, "has_moved"):
             self.moved_piece.has_moved = True
             ###print('PIECE', self.moved_piece.is_white(), self.moved_piece, "set to moved")
             ###print(self.start.x, self.start.y, self.end.x, self.end.y)
-        if hasattr(self.moved_piece, 'last_move_is_double'):
+        if hasattr(self.moved_piece, "last_move_is_double"):
             if abs(self.start.get_x() - self.end.get_x()) > 1:
                 self.moved_piece.last_move_is_double = True
             else:
@@ -67,11 +71,15 @@ class Move:
                 else:
                     rook_starting_coordinates = (self.start.x, 7)
                     rook_ending_coordinates = (self.start.x, 5)
-                    must_be_empty_cells = [self.board.get_cell(self.start.x, 5),
-                                           self.board.get_cell(self.start.x, 6)]
-                    must_not_be_threatened_cells = [self.board.get_cell(self.start.x, 4),
-                                                    self.board.get_cell(self.start.x, 5),
-                                                    self.board.get_cell(self.start.x, 6)]
+                    must_be_empty_cells = [
+                        self.board.get_cell(self.start.x, 5),
+                        self.board.get_cell(self.start.x, 6),
+                    ]
+                    must_not_be_threatened_cells = [
+                        self.board.get_cell(self.start.x, 4),
+                        self.board.get_cell(self.start.x, 5),
+                        self.board.get_cell(self.start.x, 6),
+                    ]
 
             elif self.end.y == 2:  # Castling on the left
                 rook_to_move = self.board.get_cell(self.start.x, 0).get_piece()
@@ -84,12 +92,16 @@ class Move:
                 else:
                     rook_starting_coordinates = (self.start.x, 0)
                     rook_ending_coordinates = (self.start.x, 3)
-                    must_be_empty_cells = [self.board.get_cell(self.start.x, 1),
-                                           self.board.get_cell(self.start.x, 2),
-                                           self.board.get_cell(self.start.x, 3)]
-                    must_not_be_threatened_cells = [self.board.get_cell(self.start.x, 2),
-                                                    self.board.get_cell(self.start.x, 3),
-                                                    self.board.get_cell(self.start.x, 4)]
+                    must_be_empty_cells = [
+                        self.board.get_cell(self.start.x, 1),
+                        self.board.get_cell(self.start.x, 2),
+                        self.board.get_cell(self.start.x, 3),
+                    ]
+                    must_not_be_threatened_cells = [
+                        self.board.get_cell(self.start.x, 2),
+                        self.board.get_cell(self.start.x, 3),
+                        self.board.get_cell(self.start.x, 4),
+                    ]
             else:
                 ###print('king did not move to a castling position')
                 return False
@@ -106,11 +118,15 @@ class Move:
 
             conditions_to_castling = [empty_cells_check, not_threatened_cells]
             if all(conditions_to_castling):
-                self.complementary_castling = rook_to_move, \
-                                              self.board.get_cell(rook_starting_coordinates[0],
-                                                                  rook_starting_coordinates[1]), \
-                                              self.board.get_cell(rook_ending_coordinates[0],
-                                                                  rook_ending_coordinates[1])
+                self.complementary_castling = (
+                    rook_to_move,
+                    self.board.get_cell(
+                        rook_starting_coordinates[0], rook_starting_coordinates[1]
+                    ),
+                    self.board.get_cell(
+                        rook_ending_coordinates[0], rook_ending_coordinates[1]
+                    ),
+                )
                 return True
 
             else:
@@ -122,7 +138,6 @@ class Move:
 
     def _is_en_passant(self):
         if isinstance(self.moved_piece, material.Pawn):
-
             dx = self.start.get_x() - self.end.get_x()
             dy = self.start.get_y() - self.end.get_y()
             if dy == 0 or self.killed_piece is not None:
@@ -132,7 +147,10 @@ class Move:
                 crossed_cell = self.board.get_cell(self.start.get_x(), self.end.get_y())
                 crossed_piece = crossed_cell.get_piece()
                 if isinstance(crossed_piece, material.Pawn):
-                    if crossed_piece.last_move_is_double and crossed_piece.is_white() != self.moved_piece.is_white():
+                    if (
+                        crossed_piece.last_move_is_double
+                        and crossed_piece.is_white() != self.moved_piece.is_white()
+                    ):
                         # Revoir comment on update cet attribut last_move_is_double
                         self.killed_piece = crossed_piece
                         self.en_passant = True
@@ -167,12 +185,16 @@ class Move:
 
         if self.killed_piece is not None:
             self.board.kill_piece_from_coordinates((self.end.x, self.end.y))
-        self.board.move_piece_from_coordinates((self.start.x, self.start.y), (self.end.x, self.end.y))
+        self.board.move_piece_from_coordinates(
+            (self.start.x, self.start.y), (self.end.x, self.end.y)
+        )
         # ADD CASTLING
 
         if self.complementary_castling is not None and self.is_castling:
             castling_rook, rook_start, rook_end = self.complementary_castling
-            self.board.move_piece_from_coordinates((rook_start.x, rook_start.y), (rook_end.x, rook_end.y))
+            self.board.move_piece_from_coordinates(
+                (rook_start.x, rook_start.y), (rook_end.x, rook_end.y)
+            )
             ###print("CASTLING DETECTED PPPPPPPPP")
             self._set_castling_done()
 
@@ -180,7 +202,7 @@ class Move:
             self._transform_pawn()
         self._set_moved_attribute()
 
-    def is_possible_move(self): # REFONDRE
+    def is_possible_move(self):  # REFONDRE
         # To be implemented
         # Should be kept ?
 
@@ -289,4 +311,6 @@ class Move:
             king = move.board.white_king
         else:
             king = move.board.black_king
-        return move.board.get_cell(king.x, king.y).is_threatened(move.board, king.is_white())
+        return move.board.get_cell(king.x, king.y).is_threatened(
+            move.board, king.is_white()
+        )

@@ -8,25 +8,24 @@ import engine.move as move
 
 
 class EasyAIPlayer(Player):
-
     piece_weights = {
         "pawn": 10,
         "knight": 30,
         "bishop": 30,
         "rook": 50,
         "queen": 90,
-        "king": 900
+        "king": 900,
     }
     piece_positions_weights = {
         "pawn": [
-            [0.]*8,
-            [5.0]*8,
+            [0.0] * 8,
+            [5.0] * 8,
             [1.0, 1.0, 2.0, 3.0, 3.0, 2.0, 1.0, 1.0],
             [0.5, 0.5, 1.0, 2.5, 2.5, 1.0, 0.5, 0.5],
             [0.0, 0.0, 0.0, 2.0, 2.0, 0.0, 0.0, 0.0],
             [0.5, -0.5, -1.0, 0.0, 0.0, -1.0, -0.5, 0.5],
             [0.5, 1.0, 1.0, -2.0, -2.0, 1.0, 1.0, 0.5],
-            [0.]*8
+            [0.0] * 8,
         ],
         "bishop": [
             [-2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0],
@@ -36,7 +35,7 @@ class EasyAIPlayer(Player):
             [-1.0, 0.0, 1.0, 1.0, 1.0, 1.0, 0.0, -1.0],
             [-1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, -1.0],
             [-1.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.5, -1.0],
-            [-2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0]
+            [-2.0, -1.0, -1.0, -1.0, -1.0, -1.0, -1.0, -2.0],
         ],
         "knight": [
             [-5.0, -4.0, -3.0, -3.0, -3.0, -3.0, -4.0, -5.0],
@@ -46,7 +45,7 @@ class EasyAIPlayer(Player):
             [-3.0, 0.0, 1.5, 2.0, 2.0, 1.5, 0.0, -3.0],
             [-3.0, 0.5, 1.0, 1.5, 1.5, 1.0, 0.5, -3.0],
             [-4.0, -2.0, 0.0, 0.5, 0.5, 0.0, -2.0, -4.0],
-            [-5.0, -4.0, -3.0, -3.0, -3.0, -3.0, -4.0, -5.0]
+            [-5.0, -4.0, -3.0, -3.0, -3.0, -3.0, -4.0, -5.0],
         ],
         "rook": [
             [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
@@ -56,7 +55,7 @@ class EasyAIPlayer(Player):
             [-0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5],
             [-0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5],
             [-0.5, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, -0.5],
-            [0.0, 0.0, 0.0, 0.5, 0.5, 0.0, 0.0, 0.0]
+            [0.0, 0.0, 0.0, 0.5, 0.5, 0.0, 0.0, 0.0],
         ],
         "queen": [
             [-2.0, -1.0, -1.0, -0.5, -0.5, -1.0, -1.0, -2.0],
@@ -66,7 +65,7 @@ class EasyAIPlayer(Player):
             [0.0, 0.0, 0.5, 0.5, 0.5, 0.5, 0.0, 0.0],
             [-1.0, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, -1.0],
             [-1.0, 0.0, 0.5, 0.0, 0.0, 0.0, 0.0, 0.0, -1.0],
-            [-2.0, -1.0, -1.0, -0.5, -0.5, -1.0, -1.0, -2.0]
+            [-2.0, -1.0, -1.0, -0.5, -0.5, -1.0, -1.0, -2.0],
         ],
         "king": [
             [-3.0, -4.0, -4.0, -5.0, -5.0, -4.0, -4.0, -3.0],
@@ -76,8 +75,8 @@ class EasyAIPlayer(Player):
             [-2.0, -3.0, -3.0, -4.0, -4.0, -3.0, -3.0, -2.0],
             [-1.0, -2.0, -2.0, -2.0, -2.0, -2.0, -2.0, -1.0],
             [2.0, 2.0, 0.0, 0.0, 0.0, 0.0, 2.0, 2.0],
-            [2.0, 3.0, 1.0, 0.0, 0.0, 1.0, 3.0, 2.0]
-        ]
+            [2.0, 3.0, 1.0, 0.0, 0.0, 1.0, 3.0, 2.0],
+        ],
     }
 
     def __init__(self, *args, **kwargs):
@@ -91,13 +90,14 @@ class EasyAIPlayer(Player):
                 self.piece_positions_weights[key] = new_values
 
     def __str__(self):
-        return 'EasyAIPlayer'
+        return "EasyAIPlayer"
 
     def _get_possible_moves(self, board, is_white=None):
         if is_white is None:
             is_white = self.white_side()
 
         if self.white_side != is_white:
+
             class TempPlayer:
                 def __init__(self):
                     self.white_side = is_white
@@ -119,8 +119,12 @@ class EasyAIPlayer(Player):
                     if isinstance(piece, material.Pawn):
                         ###print("POSSIBLE MOVES FOR PAWN", piece_available_moves)
                         pass
-                    selected_move = move.Move(player, board, board.get_cell(piece.x, piece.y),
-                                              board.get_cell(mv[0], mv[1]))
+                    selected_move = move.Move(
+                        player,
+                        board,
+                        board.get_cell(piece.x, piece.y),
+                        board.get_cell(mv[0], mv[1]),
+                    )
                     if selected_move.is_possible_move():
                         possible_moves.append(selected_move)
                         ###print("possible move +1")
@@ -166,7 +170,9 @@ class EasyAIPlayer(Player):
     def _search_tree(self, init_board, depth=2, method="max"):
         possible_moves = self._get_possible_moves(init_board)
         if depth == 1:
-            best_move, best_score = self._select_move_from_score(possible_moves, method=method)
+            best_move, best_score = self._select_move_from_score(
+                possible_moves, method=method
+            )
             return best_move, best_score
         else:
             new_method = {"max": "min", "min": "max"}
@@ -176,7 +182,9 @@ class EasyAIPlayer(Player):
                 # p_mv = pickle.loads(pickle.dumps(p_mv, -1))
                 # p_mv = copy.deepcopy(p_mv)
                 p_mv.move_pieces()
-                _, score = self._search_tree(p_mv.board, depth=depth-1, method=new_method[method])
+                _, score = self._search_tree(
+                    p_mv.board, depth=depth - 1, method=new_method[method]
+                )
                 scores.append(score)
 
             if method == "max":
@@ -184,11 +192,10 @@ class EasyAIPlayer(Player):
             else:
                 best_score = np.min(score)
 
-            best_indexes = np.where(np.array(scores)==best_score)[0]
+            best_indexes = np.where(np.array(scores) == best_score)[0]
             final_index = best_indexes[np.random.permutation(len(best_indexes))[0]]
             ###print(final_index)
             return possible_moves[int(final_index)], best_score
-
 
     def _score_move(self, move):
         all_scores = {}
@@ -200,7 +207,15 @@ class EasyAIPlayer(Player):
 
         return move, score
 
-    def _alpha_beta(self, init_board, init_move=None, depth=2, alpha=-10000, beta=10000, is_white=None):
+    def _alpha_beta(
+        self,
+        init_board,
+        init_move=None,
+        depth=2,
+        alpha=-10000,
+        beta=10000,
+        is_white=None,
+    ):
         if is_white is None:
             is_white = self.white_side
         ###print('ALPHA BETA FOR BOARD:', "with depth", depth)
@@ -224,8 +239,14 @@ class EasyAIPlayer(Player):
                 # p_mv_ = copy.deepcopy(p_mv)
                 p_mv_ = p_mv.deepcopy()
                 p_mv_.move_pieces()
-                score, _ = self._alpha_beta(p_mv_.board, init_move=p_mv_, depth=depth-1, alpha=alpha, beta=beta,
-                                            is_white=not is_white)
+                score, _ = self._alpha_beta(
+                    p_mv_.board,
+                    init_move=p_mv_,
+                    depth=depth - 1,
+                    alpha=alpha,
+                    beta=beta,
+                    is_white=not is_white,
+                )
                 ###print(score, p_mv.start.x, p_mv.start.y, p_mv.end.x, p_mv.end.y)
                 best_move = [best_move, p_mv][np.argmax([best_score, score])]
                 best_score = np.max([best_score, score])
@@ -246,8 +267,14 @@ class EasyAIPlayer(Player):
                 # p_mv_ = pickle.loads(pickle.dumps(p_mv, -1))
                 p_mv_ = p_mv.deepcopy()
                 p_mv_.move_pieces()
-                score, _ = self._alpha_beta(p_mv_.board, init_move=p_mv_, depth=depth-1, alpha=alpha, beta=beta,
-                                            is_white=is_white)
+                score, _ = self._alpha_beta(
+                    p_mv_.board,
+                    init_move=p_mv_,
+                    depth=depth - 1,
+                    alpha=alpha,
+                    beta=beta,
+                    is_white=is_white,
+                )
                 ###print(score, p_mv.start.x, p_mv.start.y, p_mv.end.x, p_mv.end.y)
                 best_move = [best_move, p_mv][np.argmin([best_score, score])]
                 best_score = np.min([best_score, score])
@@ -264,7 +291,10 @@ class EasyAIPlayer(Player):
         for i in np.random.permutation(8):
             for j in np.random.permutation(8):
                 if board.get_cell(i, j).get_piece() is not None:
-                    if board.get_cell(i, j).get_piece().is_white() == self.is_white_side():
+                    if (
+                        board.get_cell(i, j).get_piece().is_white()
+                        == self.is_white_side()
+                    ):
                         selected_piece = board.get_cell(i, j).get_piece()
                         ###print('AI Selected Piece', selected_piece)
                         possible_moves = selected_piece.get_potential_moves(i, j)
@@ -275,8 +305,12 @@ class EasyAIPlayer(Player):
                         ###print('Verifying Moves,', len(possible_moves), 'Moves Possibles')
                         while not verified_move and index < len(random_move):
                             selected_move = possible_moves[random_move[index]]
-                            selected_move = move.Move(self, board, board.get_cell(i, j),
-                                                 board.get_cell(selected_move[0], selected_move[1]))
+                            selected_move = move.Move(
+                                self,
+                                board,
+                                board.get_cell(i, j),
+                                board.get_cell(selected_move[0], selected_move[1]),
+                            )
                             verified_move = selected_move.is_possible_move()
                             index += 1
 
@@ -303,16 +337,16 @@ class EasyAIPlayer(Player):
 
     def _score_board(self, board):
         score = 0
-        for piece_type in board.all_material[self.color]['alive'].keys():
-            for piece in board.all_material[self.color]['alive'][piece_type]:
+        for piece_type in board.all_material[self.color]["alive"].keys():
+            for piece in board.all_material[self.color]["alive"][piece_type]:
                 score += self.piece_weights[piece_type]
                 ###print(piece_type, piece.x, piece.y)
                 score += self.piece_positions_weights[piece_type][piece.x][piece.y]
 
         adv_color = "white" if self.color == "black" else "black"
 
-        for piece_type in board.all_material[adv_color]['alive'].keys():
-            for piece in board.all_material[adv_color]['alive'][piece_type]:
+        for piece_type in board.all_material[adv_color]["alive"].keys():
+            for piece in board.all_material[adv_color]["alive"][piece_type]:
                 score -= self.piece_weights[piece_type]
                 score -= self.piece_positions_weights[piece_type][piece.x][piece.y]
         return score
