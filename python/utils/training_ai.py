@@ -23,4 +23,3 @@ for kiwi in range(100):
         if not game_is_on[0]:
             print(game_is_on)
             break
-

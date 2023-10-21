@@ -5,17 +5,17 @@ import numpy as np
 
 from PIL import Image
 
-black_pawn = np.array(Image.open('own_illustrations/queen_grey.png'))
+black_pawn = np.array(Image.open("own_illustrations/queen_grey.png"))
 
-black_back = (np.array([0.4, 0.4, 0.8]) * 255).astype('uint8')
-white_back = (np.array([0.4, 0.8, 0.4]) * 255).astype('uint8')
+black_back = (np.array([0.4, 0.4, 0.8]) * 255).astype("uint8")
+white_back = (np.array([0.4, 0.8, 0.4]) * 255).astype("uint8")
 
 changed = []
 for i in range(3):
     channel = np.copy(black_pawn[:, :, i])
-    channel[black_pawn[:, :, i]<137] = 100 * i
-    channel[black_pawn[:, :, i]==0] = 200 / (i+1)
-    channel[black_pawn[:, :, i]>137] = 100 * i - 50
+    channel[black_pawn[:, :, i] < 137] = 100 * i
+    channel[black_pawn[:, :, i] == 0] = 200 / (i + 1)
+    channel[black_pawn[:, :, i] > 137] = 100 * i - 50
     changed.append(channel)
 
 plt.figure()
