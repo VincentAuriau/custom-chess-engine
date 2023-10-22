@@ -52,6 +52,7 @@ def test_default_promotion():
     assert game.board.to_fen()[0] == "rnbqkbnr/pppp1ppp/8/8/P7/7N/1PPPP2P/RNBQKBqR"
 
 def test_working_castling():
+    """ Tests that small and big castling work. """
     game = engine.Game(automatic_draw=False)
     game.move_from_coordinates(game.player1, 1, 4, 3, 4)
     game.move_from_coordinates(game.player2, 6, 4, 4, 4)
@@ -73,6 +74,7 @@ def test_working_castling():
     assert game.board.to_fen()[0] == "r1b2rk1/ppppqppp/2n2n2/2b1p3/4P1Q1/2NP4/PPPB1PPP/2KR1BNR"
 
 def test_failing_castling():
+    """ Tests conditions where castling cannot be done. """
     game = engine.Game(automatic_draw=False)
     game.move_from_coordinates(game.player1, 1, 4, 3, 4)
     game.move_from_coordinates(game.player2, 6, 4, 4, 4)
@@ -93,6 +95,7 @@ def test_failing_castling():
     assert game.board.to_fen()[0] == "rnbqk2r/pppp1ppp/5n2/2b1p3/4P1Q1/2N5/PPPP1PPP/R1B1KBNR"
 
 def test_en_passant():
+    """ Tests that prise en passant can be done. """
     game = engine.Game(automatic_draw=False)
     game.move_from_coordinates(game.player1, 1, 4, 3, 4)
     game.move_from_coordinates(game.player2, 6, 0, 5, 0)
@@ -102,6 +105,7 @@ def test_en_passant():
     assert game.board.to_fen()[0] == "rnbqkbnr/pppp1ppp/8/8/5P2/P4p2/1PPPP1PP/RNBQKBNR"
 
 def test_blocked_by_mat():
+    """ Tests that if the king is checked cannot move unless it unchecks the king. """
     game = engine.Game(automatic_draw=True)
     game.move_from_coordinates(game.player1, 1, 4, 3, 4)
     game.move_from_coordinates(game.player2, 6, 5, 4, 5)
@@ -110,6 +114,7 @@ def test_blocked_by_mat():
     assert status == 0
 
 def test_end_game():
+    """ Tests what happens when check & mat happens. """
     game = engine.Game(automatic_draw=True)
     game.move_from_coordinates(game.player1, 1, 4, 3, 4)
     game.move_from_coordinates(game.player2, 6, 5, 4, 5)
