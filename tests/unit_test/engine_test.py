@@ -15,7 +15,7 @@ def test_blocked_moves():
     _, winner = game.move_from_coordinates(game.player2, 7, 0, 5, 0)
     assert winner == 0
 
-
+    
 def test_promotion_to_rook():
     """
     Test that the promotion works well
