@@ -376,7 +376,37 @@ class Pawn(Piece):
         return possible_moves
 
     def promote(self, promote_into="Queen"):
-        raise NotImplementedError
+        """Method to promote a pawn to other material type. Only happens if the pawn reaches the other side of the board.
+        The player can choose which type of material he wants its pawn to be promoted into.
+
+        Parameters
+        ----------
+        promote_into: str
+            Type of material to promote the pawn into.
+
+        Returns
+        -------
+        Piece
+            New piece with right promotion and same coordinates of current pawn.
+        """
+        # Should we verify color and coordinates of Pawn ?
+        if self.is_white():
+            assert self.x == 7, "Pawn has not reached other side of the board"
+        else:
+            assert self.x == 0, "Pawn has not reached the other side of the board"
+
+        if promote_into.lower() == "queen":
+            return Queen(white=self.is_white(), x=self.x, y=self.y)
+        elif promote_into.lower() == "rook":
+            rook = Rook(white=self.is_white(), x=self.x, y=self.y)
+            rook.has_moved = True
+            return rook
+        elif promote_into == "knight":
+            return Knight(white=self.is_white(), x=self.x, y=self.y)
+        elif promote_into == "bishop":
+            return Bishop(white=self.is_white(), x=self.x, y=self.y)
+        else:
+            raise ValueError(f"Cannot promote piece into, {promote_into}, piece unknown")
 
     def get_str(self):
         """Method to represent the piece as a string.

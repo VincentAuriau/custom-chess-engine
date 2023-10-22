@@ -5,11 +5,13 @@ import engine.material as material
 
 
 class Move:
-    def __init__(self, player, board, start, end):
+    def __init__(self, player, board, start, end, extras={}):
         self.player = player
         self.board = board
         self.start = start
         self.end = end
+        self.extras = extras
+
         self.moved_piece = start.get_piece()
         if self.moved_piece is None:
             ###print("Empty cell selected as start of a move")
@@ -18,7 +20,6 @@ class Move:
         self.is_castling = False
         self.complementary_castling = None
         self.en_passant = False
-        self.transform_pawn = False
 
     def deepcopy(self):
         copied_board = self.board.deepcopy()
@@ -31,7 +32,6 @@ class Move:
         copied_move.is_castling = self.is_castling
         copied_move.complementary_castling = self.complementary_castling
         copied_move.en_passant = self.en_passant
-        copied_move.transform_pawn = self.transform_pawn
         return copied_move
 
     def _set_moved_attribute(self):
@@ -162,21 +162,24 @@ class Move:
         else:
             return False
 
-    def _is_pawn_transformation(self):
+    def _is_pawn_promotion(self):
         if not isinstance(self.moved_piece, material.Pawn):
             return False
         else:
             if self.end.get_x() == 7 and self.moved_piece.is_white():
+                self.promote_into = self.extras.get("promote_into", "queen")
+                print(self.extras)
                 return True
             elif self.end.get_x() == 0 and not self.moved_piece.is_white():
+                self.promote_into = self.extras.get("promote_into", "queen")
                 return True
             else:
                 return False
 
-    def _transform_pawn(self):
-        ###print("TRANSFORM PAWN 2", self.moved_piece, self.moved_piece.is_white())
+    def _promote_pawn(self):
         coordinates = (self.end.get_x(), self.end.get_y())
-        self.board.transform_pawn(coordinates)
+        print("promote into", self.promote_into)
+        self.board.promote_pawn(coordinates=coordinates, promote_into=self.promote_into)
 
     def move_pieces(self):
         """
@@ -198,8 +201,8 @@ class Move:
             ###print("CASTLING DETECTED PPPPPPPPP")
             self._set_castling_done()
 
-        if self._is_pawn_transformation():
-            self._transform_pawn()
+        if self._is_pawn_promotion():
+            self._promote_pawn()
         self._set_moved_attribute()
 
     def is_possible_move(self):  # REFONDRE
