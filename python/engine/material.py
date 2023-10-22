@@ -406,7 +406,9 @@ class Pawn(Piece):
         elif promote_into == "bishop":
             return Bishop(white=self.is_white(), x=self.x, y=self.y)
         else:
-            raise ValueError(f"Cannot promote piece into, {promote_into}, piece unknown")
+            raise ValueError(
+                f"Cannot promote piece into, {promote_into}, piece unknown"
+            )
 
     def get_str(self):
         """Method to represent the piece as a string.

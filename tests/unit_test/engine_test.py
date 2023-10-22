@@ -15,6 +15,7 @@ def test_blocked_moves():
     _, winner = game.move_from_coordinates(game.player2, 7, 0, 5, 0)
     assert winner == 0
 
+
 def test_promotion_to_rook():
     """
     Test that the promotion works well
@@ -28,7 +29,9 @@ def test_promotion_to_rook():
     game.move_from_coordinates(game.player2, 6, 0, 5, 0)
     game.move_from_coordinates(game.player1, 5, 5, 6, 6)
     game.move_from_coordinates(game.player2, 5, 0, 4, 0)
-    game.move_from_coordinates(game.player1, 6, 6, 7, 6, extras={"promote_into": "rook"})
+    game.move_from_coordinates(
+        game.player1, 6, 6, 7, 6, extras={"promote_into": "rook"}
+    )
     assert game.board.to_fen()[0] == "rnbqkbnr/pppp1ppp/8/8/P7/7N/1PPPP2P/RNBQKBrR"
 
 
@@ -47,6 +50,7 @@ def test_default_promotion():
     game.move_from_coordinates(game.player2, 5, 0, 4, 0)
     game.move_from_coordinates(game.player1, 6, 6, 7, 6)
     assert game.board.to_fen()[0] == "rnbqkbnr/pppp1ppp/8/8/P7/7N/1PPPP2P/RNBQKBqR"
+
 
 if __name__ == "__main__":
     pass
