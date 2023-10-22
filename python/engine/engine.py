@@ -618,7 +618,7 @@ class Board:
             # ###print(boarder_line)
             whole_text += "\n"
             whole_text += boarder_line
-        print(whole_text)
+        print(whole_text + "\n")
         return whole_text
 
 
@@ -692,6 +692,7 @@ class Game:
 
     def check_pat_mat(self, player):
         can_player_move = self.can_player_move(player)
+        print("CAN MOVE", can_player_move)
 
         if can_player_move:
             return 0
