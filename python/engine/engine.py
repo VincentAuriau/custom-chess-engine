@@ -575,7 +575,6 @@ class Board:
     def transform_pawn(self, coordinates):
         pawn = self.get_cell(coordinates[0], coordinates[1]).get_piece()
         if not isinstance(pawn, material.Pawn):
-            ###print(pawn)
             raise ValueError("Transforming piece that is not a Pawn")
         else:
             color = "white" if pawn.is_white() else "black"
@@ -584,6 +583,18 @@ class Board:
             new_queen = material.Queen(pawn.is_white(), pawn.x, pawn.y)
             self.get_cell(pawn.x, pawn.y).set_piece(new_queen)
             self.all_material[color]["alive"]["queen"].append(new_queen)
+
+    def promote_pawn(self, coordinates, promote_into="Queen"):
+        pawn = self.get_cell(coordinates[0], coordinates[1]).get_piece()
+        if not isinstance(pawn, material.Pawn):
+            raise ValueError("Transforming piece that is not a Pawn")
+        else:
+            color = "white" if pawn.is_white() else "black"
+            self.all_material[color]["alive"][pawn.type].remove(pawn)
+
+            new_piece = pawn.promote(promote_into=promote_into)
+            self.get_cell(pawn.x, pawn.y).set_piece(new_piece)
+            self.all_material[color]["alive"]["queen"].append(new_piece)
 
     def draw(self, printing=True):
         whole_text = "    |  0  |  1  |  2  |  3  |  4  |  5  |  6  |  7  |"
@@ -644,11 +655,11 @@ class Game:
     def is_finished(self):
         return self.status != "ACTIVE"
 
-    def move_from_coordinates(self, player, start_x, start_y, end_x, end_y):
+    def move_from_coordinates(self, player, start_x, start_y, end_x, end_y, extras={}):
         start_cell = self.board.get_cell(start_x, start_y)
         end_cell = self.board.get_cell(end_x, end_y)
 
-        move = Move(player, self.board, start_cell, end_cell)
+        move = Move(player, self.board, start_cell, end_cell, extras=extras)
 
         return self.move(move, player)
 
@@ -703,22 +714,17 @@ class Game:
         # List of checks
         # To change if castling or en passant move
         if moved_piece is None:
-            ###print('There is no moved piece, move is aborted')
             return False, 0
         assert moved_piece is not None
 
         if player != self.to_play_player:
-            ###print('The wrong player has played, move is aborted')
-            ###print(self.to_play_player, 'supposed to play and', player, 'has played')
             return False, 0
         assert player == self.to_play_player
 
         allowed_move = move.is_possible_move()
         if not allowed_move:
-            ###print('Move method checking legality of move rejected it')
             return False, 0
         elif moved_piece.is_white() != player.is_white_side():
-            ###print("Engine detected player to move other side piece")
             return False, 0
 
         else:
@@ -742,8 +748,6 @@ class Game:
         elif self.board.black_king.is_killed():
             print("END OF THE GAME, WHITE HAS WON")
             return False, "white"
-
-        ###print('PLAYER TO PLAY:', self.to_play_player)
 
         # Checking for PAT & MAT
         check_status, winner = self.update_status()
