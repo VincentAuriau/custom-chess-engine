@@ -5,7 +5,53 @@ import engine.material as material
 
 
 class Move:
+    """Base class for material movement.
+
+    Implements various checks and is able to operate a piece movement along additional actions such as taking an
+    adversary piece, castling, en passant.
+
+    Attributes
+    ----------
+    player : player.Player
+        Which player wants to play the move.
+    board : Engine.Board
+        board of the game on which the move is operated.
+    start : engine.Cell
+        Current cell on which the moved piece is.
+    end: engine.Cell
+        Cell on which the piece is moved to.
+    moved_piece: material.Piece
+        Piece of the board that is moved.
+    killed_piece: [None or material.Piece]
+        If a piece is killed during the move (meaning that there is a piece on cell end) otherwise is None.
+    is_castling: bool
+        Whether the move it castling.
+    complementary_castling: [None or material.Piece]
+        If is_castling, holds additional information => To be moved in extras ?
+    is_en_passant: bool
+        Whether or not the move is taking a Pawn 'En Passant'
+    extras: dict
+        Used to introduce additional information such as piece for promotion.
+
+    """
+
     def __init__(self, player, board, start, end, extras={}):
+        """Initialization of the piece.
+
+        Parameters
+        ----------
+        player : player.Player
+            Which player wants to play the move.
+        board : Engine.Board
+            board of the game on which the move is operated.
+        start : engine.Cell
+            Current cell on which the moved piece is.
+        end: engine.Cell
+            Cell on which the piece is moved to.
+        extras: dict
+            Used to introduce additional information such as piece for promotion.
+
+        """
         self.player = player
         self.board = board
         self.start = start
@@ -21,7 +67,16 @@ class Move:
         self.complementary_castling = None
         self.en_passant = False
 
-    def deepcopy(self):
+    def deepcopy(self): 
+        """Method to create an uncorrelated clone of the move.
+
+        Returns
+        -------
+        Move
+            Exact copy of self.
+
+        """
+        # Rethink what needs to be copied and what needs not
         copied_board = self.board.deepcopy()
         copied_move = Move(
             self.player,
