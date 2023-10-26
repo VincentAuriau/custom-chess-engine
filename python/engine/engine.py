@@ -21,7 +21,30 @@ class Color:
 
 
 class Cell:
+    """
+    Cell class representing a base element of a board. 
+
+    Attributes
+    ----------
+    x : int
+        x coordinate of the cell on the board.
+    y : int
+        y coordinate of the cell on the board
+    piece: material.Piece or None
+        Piece that is on the cell (or None if no Piece is on the cell)
+    """
     def __init__(self, x, y, piece):
+        """Initialization of the cell.
+
+        Parameters
+        ----------
+        x : int
+            x coordinate of the cell on the board.
+        y : int
+            y coordinate of the cell on the board
+        piece: material.Piece or None
+            Piece that is on the cell (or None if no Piece is on the cell)
+        """
         self.x = x
         self.y = y
         self.piece = piece
@@ -30,27 +53,80 @@ class Cell:
             self.piece.y = y
 
     def __deepcopy__(self, memodict={}):
+        """Method to create an uncorrelated clone of the cell.
+
+        Returns
+        -------
+        Cell
+            Exact copy of self.
+        """
         copy_object = Cell(self.x, self.y, copy.deepcopy(self.piece))
         return copy_object
 
     def set_piece(self, piece):
+        """Sets a Piece in the Cell.
+
+        Parameters
+        ----------
+        piece: material.Piece
+            Piece to set up on self.
+        """
         self.piece = piece
         if piece is not None:
             self.piece.x = self.x
             self.piece.y = self.y
 
     def get_piece(self):
+        """Method to access the piece on the Cell.
+
+        Returns
+        -------
+        Piece
+            Piece on the self.
+        """
         return self.piece
 
     def get_x(self):
+        """Method to acces Cell x coordinate.
+
+        Returns
+        -------
+        int
+            x-axis coordinate of self.
+        """
         return self.x
 
     def get_y(self):
+        """Method to acces Cell y coordinate.
+
+        Returns
+        -------
+        int
+            y-axis coordinate of self.
+        """
         return self.y
 
     def is_threatened(
         self, board, threaten_color
     ):  # change threaten_color par #white_threatened
+        """
+        Method to check if the Cell is threatened by a given color.
+
+        Parameters
+        ----------
+        board : Board
+            Board to which self belongs to.
+        threaten_color : str
+            Color of that wants to know if cell is threatened by opponent.
+
+        Returns
+        -------
+        bool
+            Whether the celle is threatened or not.
+        """
+        # One way that could be more efficient would be to keep at every step the list of threatened cell by each piece
+        # And update it at each move.
+
         # Check Knights threatening
         for i, j in [
             (2, 1),
@@ -65,7 +141,7 @@ class Cell:
             x_to_check = self.x + i
             y_to_check = self.y + j
 
-            if 0 < x_to_check < 8 and 0 < y_to_check < 8:
+            if 0 <= x_to_check < 8 and 0 <= y_to_check < 8:
                 cell_to_check = board.get_cell(x_to_check, y_to_check)
                 piece_to_check = cell_to_check.get_piece()
 
@@ -74,11 +150,12 @@ class Cell:
                         return True
 
         # King + Rook + Queen
+        # Checking direct surroundings
         for i, j in [(1, 0), (0, -1), (-1, 0), (0, -1)]:
             x_to_check = self.x + i
             y_to_check = self.y + j
 
-            if 0 < x_to_check < 8 and 0 < y_to_check < 8:
+            if 0 <= x_to_check < 8 and 0 <= y_to_check < 8:
                 cell_to_check = board.get_cell(x_to_check, y_to_check)
                 piece_to_check = cell_to_check.get_piece()
 
@@ -91,8 +168,9 @@ class Cell:
                         return True
 
         # Rook + Queen
+        # Going further
         keep_going = True
-        x_to_check = self.x + 1
+        x_to_check = self.x + 2
         y_to_check = self.y
         while x_to_check < 8 and keep_going:
             cell_to_check = board.get_cell(x_to_check, y_to_check)
@@ -109,7 +187,7 @@ class Cell:
             x_to_check += 1
 
         keep_going = True
-        x_to_check = self.x - 1
+        x_to_check = self.x - 2
         y_to_check = self.y
         while x_to_check >= 0 and keep_going:
             cell_to_check = board.get_cell(x_to_check, y_to_check)
@@ -127,7 +205,7 @@ class Cell:
 
         keep_going = True
         x_to_check = self.x
-        y_to_check = self.y + 1
+        y_to_check = self.y + 2
         while y_to_check < 8 and keep_going:
             cell_to_check = board.get_cell(x_to_check, y_to_check)
             piece_to_check = cell_to_check.get_piece()
@@ -144,7 +222,7 @@ class Cell:
 
         keep_going = True
         x_to_check = self.x
-        y_to_check = self.y - 1
+        y_to_check = self.y - 2
         while y_to_check >= 0 and keep_going:
             cell_to_check = board.get_cell(x_to_check, y_to_check)
             piece_to_check = cell_to_check.get_piece()
@@ -160,11 +238,12 @@ class Cell:
             y_to_check -= 1
 
         # King + Queen + Bishop + Pawn
+        # Checking direct surroundings
         for i, j in [(1, 1), (1, -1), (-1, 1), (-1, -1)]:
             x_to_check = self.x + i
             y_to_check = self.y + j
 
-            if 0 < x_to_check < 8 and 0 < y_to_check < 8:
+            if 0 <= x_to_check < 8 and 0 <= y_to_check < 8:
                 cell_to_check = board.get_cell(x_to_check, y_to_check)
                 piece_to_check = cell_to_check.get_piece()
 
@@ -192,8 +271,8 @@ class Cell:
 
         # Queen + Bishop
         keep_going = True
-        x_to_check = self.x + 1
-        y_to_check = self.y + 1
+        x_to_check = self.x + 2
+        y_to_check = self.y + 2
         while x_to_check < 8 and y_to_check < 8 and keep_going:
             cell_to_check = board.get_cell(x_to_check, y_to_check)
             piece_to_check = cell_to_check.get_piece()
@@ -210,8 +289,8 @@ class Cell:
             y_to_check += 1
 
         keep_going = True
-        x_to_check = self.x - 1
-        y_to_check = self.y + 1
+        x_to_check = self.x - 2
+        y_to_check = self.y + 2
         while x_to_check >= 0 and y_to_check < 8 and keep_going:
             cell_to_check = board.get_cell(x_to_check, y_to_check)
             piece_to_check = cell_to_check.get_piece()
@@ -228,8 +307,8 @@ class Cell:
             y_to_check += 1
 
         keep_going = True
-        x_to_check = self.x + 1
-        y_to_check = self.y - 1
+        x_to_check = self.x + 2
+        y_to_check = self.y - 2
         while x_to_check < 8 and y_to_check >= 0 and keep_going:
             cell_to_check = board.get_cell(x_to_check, y_to_check)
             piece_to_check = cell_to_check.get_piece()
@@ -246,8 +325,8 @@ class Cell:
             y_to_check -= 1
 
         keep_going = True
-        x_to_check = self.x - 1
-        y_to_check = self.y - 1
+        x_to_check = self.x - 2
+        y_to_check = self.y - 2
         while x_to_check >= 0 and y_to_check >= 0 and keep_going:
             cell_to_check = board.get_cell(x_to_check, y_to_check)
             piece_to_check = cell_to_check.get_piece()
@@ -267,12 +346,40 @@ class Cell:
 
 
 class Board:
+    """
+    Board class representing the chess board.
+
+    Attributes
+    ----------
+    board : list of Cells
+        Represents all cells of a chess board from x coordinates [0, 7] and y coordinates [0, 7]
+    white_king : material.King
+        King piece of white color.
+    black_king : material.King
+        King piece of black color.
+    all_material: dict
+        Dictionnary containing all the pieces on the board, killed and not killed.
+    """
     def __init__(self, empty_init=False):
+        """Initialization of the board.
+
+        Parameters
+        ----------
+        empty_init: bool
+            True if you want to start from an existing board.
+        """
         if not empty_init:
             self.board = None
             self.white_king, self.black_king, self.all_material = self._reset_board()
 
     def deepcopy(self, memodict={}):
+        """Method to create an uncorrelated clone of the board.
+
+        Returns
+        -------
+        Cell
+            Exact copy of self.
+        """
         copied_object = Board(empty_init=True)
         board = [[Cell(i, j, None) for j in range(8)] for i in range(8)]
         copied_object.board = board
@@ -292,6 +399,13 @@ class Board:
         return copied_object
 
     def deep_copy_material(self):
+        """Method to create an uncorrelated clone of all the pieces on the board, killed and not killed.
+
+        Returns
+        -------
+        dict of Pieces
+            Exact copy of self.all_material.
+        """
         material = {
             "white": {
                 "alive": {
@@ -341,6 +455,13 @@ class Board:
         return material
 
     def __deepcopy__(self, memodict={}):
+        """Method to create an uncorrelated clone of the board.
+
+        Returns
+        -------
+        Cell
+            Exact copy of self.
+        """
         copied_object = Board(empty_init=True)
         board = [[Cell(i, j, None) for j in range(8)] for i in range(8)]
         copied_object.board = board
@@ -361,6 +482,13 @@ class Board:
         return copied_object
 
     def to_fen(self):
+        """Method to generate a fen representation of the current state of the board
+
+        Returns
+        -------
+        tuple of str
+            fen representation and 'KQkq'
+        """
         fen = ""
         for line in self.board:
             no_piece_count = 0
@@ -382,6 +510,22 @@ class Board:
         return fen[:-1], "KQkq"
 
     def one_hot_encode(self, white_side=True):
+        """Method to create a representation of the board with OneHot encode of the pieces.
+
+        Attributes
+        ----------
+        white_sied : bool
+            Whether we want to represent the board from the White side point of view or not. Point of view sees its pieces
+            represented by +1 OneHot and opponent side by -1.
+
+        Returns
+        -------
+        list of list
+            8x8 list representing the board with full zeros list when cell is empty or OneHot representation of the piece on
+            the cell otherwise.
+        """
+
+        # Dict of OneHot transformations
         material_to_one_hot = {
             "pawn": [1, 0, 0, 0, 0, 0],
             "bishop": [0, 1, 0, 0, 0, 0],
@@ -390,15 +534,19 @@ class Board:
             "queen": [0, 0, 0, 0, 1, 0],
             "king": [0, 0, 0, 0, 0, 1],
         }
+        # Iterating over cells and add OneHot representations to the list.
         one_hot_board = []
         for line in self.board:
             one_hot_line = []
             for cell in line:
                 piece = cell.get_piece()
+                # Empty cell
                 if piece is None:
                     one_hot_line.append([0] * 6)
+                # Piece on the cell
                 else:
                     one_hot_piece = material_to_one_hot[piece.type]
+                    # Negative OneHot if opponent side
                     if piece.is_white() != white_side:
                         one_hot_piece = [-1 * val for val in one_hot_piece]
                     one_hot_line.append(one_hot_piece)
