@@ -1,3 +1,8 @@
+Is it the best, most efficient and state of the art chess engine ? I'm pretty sure not.
+However driven by passion and madness I have developed my own chess game in Python.
+For your pretty eyes and your devilish smile, I share it with you. But only with you.
+
+Special thanks and dedication to LeMerluche, crushing its opponents on chess.com <3
 
 ```python
 from interface.interface import MyApp
