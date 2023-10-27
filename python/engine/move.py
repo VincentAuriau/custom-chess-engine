@@ -54,18 +54,18 @@ class Move:
         """
         self.player = player
         self.board = board
-        self.start = start # Should we take only starting coordinates ?
-        self.end = end # Should we take only landing coordinates ?
+        self.start = start  # Should we take only starting coordinates ?
+        self.end = end  # Should we take only landing coordinates ?
         self.extras = extras
 
-        self.moved_piece = start.get_piece() # Check that moved_piece is not None ?
+        self.moved_piece = start.get_piece()  # Check that moved_piece is not None ?
 
         self.killed_piece = self.end.get_piece()
         self.is_castling = False
         self.complementary_castling = None
         self.en_passant = False
 
-    def deepcopy(self): 
+    def deepcopy(self):
         """Method to create an uncorrelated clone of the move.
 
         Returns
@@ -88,16 +88,20 @@ class Move:
         return copied_move
 
     def _set_moved_attribute(self):
-        """Method to set the 'has_moved' attributes for the pieces that need to check whether 
+        """Method to set the 'has_moved' attributes for the pieces that need to check whether
         they have already moved or not.
         Also, if the piece is a Pawn, changes the last_move_is_double attribute so that it can
         be taken 'En Passant' if this is the case.
         """
-        if hasattr(self.moved_piece, "has_moved"): # Check if the moved piece has the attribute
+        if hasattr(
+            self.moved_piece, "has_moved"
+        ):  # Check if the moved piece has the attribute
             self.moved_piece.has_moved = True
 
-        if hasattr(self.moved_piece, "last_move_is_double"): # Check if it is a Pawn
-            if abs(self.start.get_x() - self.end.get_x()) > 1: # If the move is a double forward
+        if hasattr(self.moved_piece, "last_move_is_double"):  # Check if it is a Pawn
+            if (
+                abs(self.start.get_x() - self.end.get_x()) > 1
+            ):  # If the move is a double forward
                 self.moved_piece.last_move_is_double = True
             else:
                 self.moved_piece.last_move_is_double = False
@@ -198,7 +202,7 @@ class Move:
             # Verifies that both conditions are met
             conditions_to_castling = [empty_cells_check, not_threatened_cells]
             if all(conditions_to_castling):
-                self.complementary_castling = ( # To store in self.extras :)
+                self.complementary_castling = (  # To store in self.extras :)
                     rook_to_move,
                     self.board.get_cell(
                         rook_starting_coordinates[0], rook_starting_coordinates[1]
@@ -239,11 +243,13 @@ class Move:
         bool
             Whether self is an 'En passant' capture or not.
         """
-        if isinstance(self.moved_piece, material.Pawn): # Only a Pawn can take 'En Passant'
+        if isinstance(
+            self.moved_piece, material.Pawn
+        ):  # Only a Pawn can take 'En Passant'
             dx = self.start.get_x() - self.end.get_x()
             dy = self.start.get_y() - self.end.get_y()
             # Needs the movement to be in diagonal and that no piece is on the landing Cell
-            if dy == 0 or self.killed_piece is not None: 
+            if dy == 0 or self.killed_piece is not None:
                 return False
 
             else:
@@ -285,12 +291,14 @@ class Move:
             return False
         else:
             # Checks if the Pawn has reached the other side of the board.
-            if self.end.get_x() == 7 and self.moved_piece.is_white(): # White Piece
+            if self.end.get_x() == 7 and self.moved_piece.is_white():  # White Piece
                 # Standard is to promote into a Queen if not specified
                 self.promote_into = self.extras.get("promote_into", "queen")
                 return True
 
-            elif self.end.get_x() == 0 and not self.moved_piece.is_white():# Black Piece
+            elif (
+                self.end.get_x() == 0 and not self.moved_piece.is_white()
+            ):  # Black Piece
                 # Standard is to promote into a Queen if not specified
                 self.promote_into = self.extras.get("promote_into", "queen")
                 return True
@@ -335,7 +343,7 @@ class Move:
         # Sets the different movement related attributes of Pieces
         self._set_moved_attribute()
 
-    def is_possible_move(self):  
+    def is_possible_move(self):
         # REFONDRE, particulièrement, faire en sorte qu'on ne vérifie chaque condition qu'une seule fois
         # Why castling is checked here ?
         """
@@ -443,7 +451,7 @@ class Move:
 
         return True
 
-    def _work_future_to_check_chess(self): # Can it be done better ?
+    def _work_future_to_check_chess(self):  # Can it be done better ?
         """
         Effectively move the Piece and check if the King is then threatened. In this case, move cannot happen.
 

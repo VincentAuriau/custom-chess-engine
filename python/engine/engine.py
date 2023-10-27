@@ -22,7 +22,7 @@ class Color:
 
 class Cell:
     """
-    Cell class representing a base element of a board. 
+    Cell class representing a base element of a board.
 
     Attributes
     ----------
@@ -33,6 +33,7 @@ class Cell:
     piece: material.Piece or None
         Piece that is on the cell (or None if no Piece is on the cell)
     """
+
     def __init__(self, x, y, piece):
         """Initialization of the cell.
 
@@ -360,6 +361,7 @@ class Board:
     all_material: dict
         Dictionnary containing all the pieces on the board, killed and not killed.
     """
+
     def __init__(self, empty_init=False):
         """Initialization of the board.
 
