@@ -13,6 +13,7 @@ class Player:
         Whether the player plays with white or black Pieces.
 
     """
+
     def __init__(self, white_side):
         """Initialization of the player.
 
@@ -25,7 +26,7 @@ class Player:
         self.random_number = np.random.randint(0, 1000, 1)
 
     def __str__(self):
-        """ Creates a string representation of the player.
+        """Creates a string representation of the player.
 
         Returns
         -------
@@ -66,8 +67,9 @@ class AIRandomPlayer(Player):
     """
     A first AI that plays totally randomly. Selects one move among all possibles and plays it.
     """
+
     def __str__(self):
-        """ Creates a string representation of the player.
+        """Creates a string representation of the player.
 
         Returns
         -------
@@ -93,7 +95,6 @@ class AIRandomPlayer(Player):
         # Random selection of Piece to play
         for i in np.random.permutation(8):
             for j in np.random.permutation(8):
-
                 # Verfies there is a Piece to play.
                 if board.get_cell(i, j).get_piece() is not None:
                     if (

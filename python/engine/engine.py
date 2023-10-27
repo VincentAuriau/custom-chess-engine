@@ -22,7 +22,7 @@ class Color:
 
 class Cell:
     """
-    Cell class representing a base element of a board. 
+    Cell class representing a base element of a board.
 
     Attributes
     ----------
@@ -33,6 +33,7 @@ class Cell:
     piece: material.Piece or None
         Piece that is on the cell (or None if no Piece is on the cell)
     """
+
     def __init__(self, x, y, piece):
         """Initialization of the cell.
 
@@ -360,6 +361,7 @@ class Board:
     all_material: dict
         Dictionnary containing all the pieces on the board, killed and not killed.
     """
+
     def __init__(self, empty_init=False):
         """Initialization of the board.
 
@@ -856,6 +858,7 @@ class Game:
     automatic draw: bool
         Whether to draw the board in the terminal at each round.
     """
+
     game_status = []
 
     def __init__(self, automatic_draw=True, ai=False):
@@ -885,15 +888,14 @@ class Game:
         self.automatic_draw = automatic_draw
 
     def reset_game(self):
-        """Method to reset the game. Recreates the borad, the pieces and restarts the game.
-        """
+        """Method to reset the game. Recreates the borad, the pieces and restarts the game."""
         self.board.reset()
         self.played_moves = []
         self.to_play_player = self.player1
 
     def to_fen(self):
         """
-        Writes the board in fen. 
+        Writes the board in fen.
 
         Returns
         -------
@@ -933,7 +935,7 @@ class Game:
         end_y: int
             x-coordinate of the cell to move the piece to
         extras: dict
-            Dictionnary used to add additional data such as which type a piece a Pawn should be promoted to 
+            Dictionnary used to add additional data such as which type a piece a Pawn should be promoted to
             if it reaches the other side of the board.
 
         Returns
@@ -1132,7 +1134,7 @@ class Game:
 
     def save(self, directory="debug_files"):
         """
-        Method to save the state of the game as matplotlib figure. 
+        Method to save the state of the game as matplotlib figure.
         Uses a str representation of the game moves as figure title.
 
         Parameters
