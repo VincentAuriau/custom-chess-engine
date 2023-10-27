@@ -21,7 +21,31 @@ class Color:
 
 
 class Cell:
+    """
+    Cell class representing a base element of a board.
+
+    Attributes
+    ----------
+    x : int
+        x coordinate of the cell on the board.
+    y : int
+        y coordinate of the cell on the board
+    piece: material.Piece or None
+        Piece that is on the cell (or None if no Piece is on the cell)
+    """
+
     def __init__(self, x, y, piece):
+        """Initialization of the cell.
+
+        Parameters
+        ----------
+        x : int
+            x coordinate of the cell on the board.
+        y : int
+            y coordinate of the cell on the board
+        piece: material.Piece or None
+            Piece that is on the cell (or None if no Piece is on the cell)
+        """
         self.x = x
         self.y = y
         self.piece = piece
@@ -30,27 +54,80 @@ class Cell:
             self.piece.y = y
 
     def __deepcopy__(self, memodict={}):
+        """Method to create an uncorrelated clone of the cell.
+
+        Returns
+        -------
+        Cell
+            Exact copy of self.
+        """
         copy_object = Cell(self.x, self.y, copy.deepcopy(self.piece))
         return copy_object
 
     def set_piece(self, piece):
+        """Sets a Piece in the Cell.
+
+        Parameters
+        ----------
+        piece: material.Piece
+            Piece to set up on self.
+        """
         self.piece = piece
         if piece is not None:
             self.piece.x = self.x
             self.piece.y = self.y
 
     def get_piece(self):
+        """Method to access the piece on the Cell.
+
+        Returns
+        -------
+        Piece
+            Piece on the self.
+        """
         return self.piece
 
     def get_x(self):
+        """Method to acces Cell x coordinate.
+
+        Returns
+        -------
+        int
+            x-axis coordinate of self.
+        """
         return self.x
 
     def get_y(self):
+        """Method to acces Cell y coordinate.
+
+        Returns
+        -------
+        int
+            y-axis coordinate of self.
+        """
         return self.y
 
     def is_threatened(
         self, board, threaten_color
     ):  # change threaten_color par #white_threatened
+        """
+        Method to check if the Cell is threatened by a given color.
+
+        Parameters
+        ----------
+        board : Board
+            Board to which self belongs to.
+        threaten_color : str
+            Color of that wants to know if cell is threatened by opponent.
+
+        Returns
+        -------
+        bool
+            Whether the celle is threatened or not.
+        """
+        # One way that could be more efficient would be to keep at every step the list of threatened cell by each piece
+        # And update it at each move.
+
         # Check Knights threatening
         for i, j in [
             (2, 1),
@@ -65,7 +142,7 @@ class Cell:
             x_to_check = self.x + i
             y_to_check = self.y + j
 
-            if 0 < x_to_check < 8 and 0 < y_to_check < 8:
+            if 0 <= x_to_check < 8 and 0 <= y_to_check < 8:
                 cell_to_check = board.get_cell(x_to_check, y_to_check)
                 piece_to_check = cell_to_check.get_piece()
 
@@ -74,11 +151,12 @@ class Cell:
                         return True
 
         # King + Rook + Queen
+        # Checking direct surroundings
         for i, j in [(1, 0), (0, -1), (-1, 0), (0, -1)]:
             x_to_check = self.x + i
             y_to_check = self.y + j
 
-            if 0 < x_to_check < 8 and 0 < y_to_check < 8:
+            if 0 <= x_to_check < 8 and 0 <= y_to_check < 8:
                 cell_to_check = board.get_cell(x_to_check, y_to_check)
                 piece_to_check = cell_to_check.get_piece()
 
@@ -90,9 +168,30 @@ class Cell:
                     if piece_to_check.is_white() != threaten_color:
                         return True
 
+                elif piece_to_check is None:
+                    keep_going = True
+                    x_to_check += i
+                    y_to_check += j
+                    while 0 <= x_to_check < 8 and 0 <= y_to_check < 8 and keep_going:
+                        cell_to_check = board.get_cell(x_to_check, y_to_check)
+                        piece_to_check = cell_to_check.get_piece()
+                        if isinstance(piece_to_check, material.Rook) or isinstance(
+                            piece_to_check, material.Queen
+                        ):
+                            keep_going = False
+                            if piece_to_check.is_white() != threaten_color:
+                                return True
+                        elif piece_to_check is not None:
+                            keep_going = False
+                        else:
+                            x_to_check += i
+                            y_to_check += j
+
+        """
         # Rook + Queen
+        # Going further
         keep_going = True
-        x_to_check = self.x + 1
+        x_to_check = self.x + 2
         y_to_check = self.y
         while x_to_check < 8 and keep_going:
             cell_to_check = board.get_cell(x_to_check, y_to_check)
@@ -109,7 +208,7 @@ class Cell:
             x_to_check += 1
 
         keep_going = True
-        x_to_check = self.x - 1
+        x_to_check = self.x - 2
         y_to_check = self.y
         while x_to_check >= 0 and keep_going:
             cell_to_check = board.get_cell(x_to_check, y_to_check)
@@ -127,7 +226,7 @@ class Cell:
 
         keep_going = True
         x_to_check = self.x
-        y_to_check = self.y + 1
+        y_to_check = self.y + 2
         while y_to_check < 8 and keep_going:
             cell_to_check = board.get_cell(x_to_check, y_to_check)
             piece_to_check = cell_to_check.get_piece()
@@ -144,7 +243,7 @@ class Cell:
 
         keep_going = True
         x_to_check = self.x
-        y_to_check = self.y - 1
+        y_to_check = self.y - 2
         while y_to_check >= 0 and keep_going:
             cell_to_check = board.get_cell(x_to_check, y_to_check)
             piece_to_check = cell_to_check.get_piece()
@@ -158,13 +257,15 @@ class Cell:
             elif piece_to_check is not None:
                 keep_going = False
             y_to_check -= 1
+        """
 
         # King + Queen + Bishop + Pawn
+        # Checking direct surroundings
         for i, j in [(1, 1), (1, -1), (-1, 1), (-1, -1)]:
             x_to_check = self.x + i
             y_to_check = self.y + j
 
-            if 0 < x_to_check < 8 and 0 < y_to_check < 8:
+            if 0 <= x_to_check < 8 and 0 <= y_to_check < 8:
                 cell_to_check = board.get_cell(x_to_check, y_to_check)
                 piece_to_check = cell_to_check.get_piece()
 
@@ -190,10 +291,31 @@ class Cell:
                     if piece_to_check.is_white() != threaten_color:
                         return True
 
+                elif piece_to_check is None:
+                    print("def")
+                    keep_going = True
+                    x_to_check += i
+                    y_to_check += j
+                    while 0 <= x_to_check < 8 and 0 <= y_to_check < 8 and keep_going:
+                        cell_to_check = board.get_cell(x_to_check, y_to_check)
+                        piece_to_check = cell_to_check.get_piece()
+
+                        if isinstance(piece_to_check, material.Bishop) or isinstance(
+                            piece_to_check, material.Queen
+                        ):
+                            keep_going = False
+                            if piece_to_check.is_white() != threaten_color:
+                                return True
+                        elif piece_to_check is not None:
+                            keep_going = False
+                        x_to_check += i
+                        y_to_check += j
+
+        """
         # Queen + Bishop
         keep_going = True
-        x_to_check = self.x + 1
-        y_to_check = self.y + 1
+        x_to_check = self.x + 2
+        y_to_check = self.y + 2
         while x_to_check < 8 and y_to_check < 8 and keep_going:
             cell_to_check = board.get_cell(x_to_check, y_to_check)
             piece_to_check = cell_to_check.get_piece()
@@ -210,8 +332,8 @@ class Cell:
             y_to_check += 1
 
         keep_going = True
-        x_to_check = self.x - 1
-        y_to_check = self.y + 1
+        x_to_check = self.x - 2
+        y_to_check = self.y + 2
         while x_to_check >= 0 and y_to_check < 8 and keep_going:
             cell_to_check = board.get_cell(x_to_check, y_to_check)
             piece_to_check = cell_to_check.get_piece()
@@ -228,8 +350,8 @@ class Cell:
             y_to_check += 1
 
         keep_going = True
-        x_to_check = self.x + 1
-        y_to_check = self.y - 1
+        x_to_check = self.x + 2
+        y_to_check = self.y - 2
         while x_to_check < 8 and y_to_check >= 0 and keep_going:
             cell_to_check = board.get_cell(x_to_check, y_to_check)
             piece_to_check = cell_to_check.get_piece()
@@ -246,8 +368,8 @@ class Cell:
             y_to_check -= 1
 
         keep_going = True
-        x_to_check = self.x - 1
-        y_to_check = self.y - 1
+        x_to_check = self.x - 2
+        y_to_check = self.y - 2
         while x_to_check >= 0 and y_to_check >= 0 and keep_going:
             cell_to_check = board.get_cell(x_to_check, y_to_check)
             piece_to_check = cell_to_check.get_piece()
@@ -262,17 +384,47 @@ class Cell:
                 keep_going = False
             x_to_check -= 1
             y_to_check -= 1
+        """
 
         return False
 
 
 class Board:
+    """
+    Board class representing the chess board.
+
+    Attributes
+    ----------
+    board : list of Cells
+        Represents all cells of a chess board from x coordinates [0, 7] and y coordinates [0, 7]
+    white_king : material.King
+        King piece of white color.
+    black_king : material.King
+        King piece of black color.
+    all_material: dict
+        Dictionnary containing all the pieces on the board, killed and not killed.
+    """
+
     def __init__(self, empty_init=False):
+        """Initialization of the board.
+
+        Parameters
+        ----------
+        empty_init: bool
+            True if you want to start from an existing board.
+        """
         if not empty_init:
             self.board = None
             self.white_king, self.black_king, self.all_material = self._reset_board()
 
     def deepcopy(self, memodict={}):
+        """Method to create an uncorrelated clone of the board.
+
+        Returns
+        -------
+        Cell
+            Exact copy of self.
+        """
         copied_object = Board(empty_init=True)
         board = [[Cell(i, j, None) for j in range(8)] for i in range(8)]
         copied_object.board = board
@@ -292,6 +444,13 @@ class Board:
         return copied_object
 
     def deep_copy_material(self):
+        """Method to create an uncorrelated clone of all the pieces on the board, killed and not killed.
+
+        Returns
+        -------
+        dict of Pieces
+            Exact copy of self.all_material.
+        """
         material = {
             "white": {
                 "alive": {
@@ -341,6 +500,13 @@ class Board:
         return material
 
     def __deepcopy__(self, memodict={}):
+        """Method to create an uncorrelated clone of the board.
+
+        Returns
+        -------
+        Cell
+            Exact copy of self.
+        """
         copied_object = Board(empty_init=True)
         board = [[Cell(i, j, None) for j in range(8)] for i in range(8)]
         copied_object.board = board
@@ -361,6 +527,13 @@ class Board:
         return copied_object
 
     def to_fen(self):
+        """Method to generate a fen representation of the current state of the board
+
+        Returns
+        -------
+        tuple of str
+            fen representation and 'KQkq'
+        """
         fen = ""
         for line in self.board:
             no_piece_count = 0
@@ -382,6 +555,22 @@ class Board:
         return fen[:-1], "KQkq"
 
     def one_hot_encode(self, white_side=True):
+        """Method to create a representation of the board with OneHot encode of the pieces.
+
+        Parameters
+        ----------
+        white_sied : bool
+            Whether we want to represent the board from the White side point of view or not. Point of view sees its pieces
+            represented by +1 OneHot and opponent side by -1.
+
+        Returns
+        -------
+        list of list
+            8x8 list representing the board with full zeros list when cell is empty or OneHot representation of the piece on
+            the cell otherwise.
+        """
+
+        # Dict of OneHot transformations
         material_to_one_hot = {
             "pawn": [1, 0, 0, 0, 0, 0],
             "bishop": [0, 1, 0, 0, 0, 0],
@@ -390,15 +579,19 @@ class Board:
             "queen": [0, 0, 0, 0, 1, 0],
             "king": [0, 0, 0, 0, 0, 1],
         }
+        # Iterating over cells and add OneHot representations to the list.
         one_hot_board = []
         for line in self.board:
             one_hot_line = []
             for cell in line:
                 piece = cell.get_piece()
+                # Empty cell
                 if piece is None:
                     one_hot_line.append([0] * 6)
+                # Piece on the cell
                 else:
                     one_hot_piece = material_to_one_hot[piece.type]
+                    # Negative OneHot if opponent side
                     if piece.is_white() != white_side:
                         one_hot_piece = [-1 * val for val in one_hot_piece]
                     one_hot_line.append(one_hot_piece)
@@ -406,20 +599,50 @@ class Board:
         return one_hot_board
 
     def get_cell(self, x, y):
+        """Method to access a cell on the board from its coordinates.
+
+        Parameters
+        ----------
+        x : int
+            x-coordinate of the cell.
+        y : int
+            y-coordinate of the cell.
+
+        Returns
+        -------
+        cell
+            Cell at coordinates (x, y)
+        """
         return self.board[x][y]
 
-    def copy(self):
-        return self.deepcopy()
-
     def reset(self):
+        """
+        Resets the board, all the pieces, everything.
+        """
         self.white_king, self.black_king, self.all_material = self._reset_board()
 
     def create_board_from_string(self, string):
-        return None
+        """
+        Method to set up a sepecific board with Pieces on specific Celss from a string.
+        """
+        raise NotImplementedError
 
     def _reset_board(self):
+        """Method to create the board. Creates Pieces and place them on their original cells.
+
+        Returns
+        -------
+        material.King
+            White King on the board
+        material.King
+            black King on the board
+        dict
+            Dictionnary with all the board pieces
+        """
+        # List of cells
         board = []
 
+        # Dictionnary to access easily the pieces
         pieces = {
             "white": {
                 "alive": {
@@ -459,6 +682,7 @@ class Board:
             },
         }
 
+        # Initialize white pieces
         white_king = material.King(True, 0, 4)
         pieces["white"]["alive"]["king"].append(white_king)
         black_king = material.King(False, 7, 4)
@@ -514,6 +738,7 @@ class Board:
             line.append(Cell(6, i, p))
         board.append(line)
 
+        # Initialize black pieces
         b_rook_1 = material.Rook(False, 7, 0)
         b_rook_2 = material.Rook(False, 7, 7)
         pieces["black"]["alive"]["rook"].append(b_rook_1)
@@ -548,31 +773,49 @@ class Board:
         return white_king, black_king, pieces
 
     def move_piece_from_coordinates(self, start_coordinates, end_coordinates):
+        """Method to move a piece on the board from start and landing coordinates.
+
+        Parameters
+        ----------
+        start_coordinates : tuple of int
+            (x, y) coordinates of move starting cell
+        end_coordinates : tuple of int
+            (x, y) coordinates of move landing cell
+        """
         start_cell = self.get_cell(start_coordinates[0], start_coordinates[1])
         end_cell = self.get_cell(end_coordinates[0], end_coordinates[1])
         piece_to_move = start_cell.get_piece()
         if piece_to_move is None:
-            ###print(start_coordinates, end_coordinates)
-            ###print(start_cell, start_cell.piece)
             raise ValueError("Empty cells chosen as moved piece")
 
         end_cell.set_piece(piece_to_move)
         start_cell.set_piece(None)
 
     def kill_piece_from_coordinates(self, coordinates):
+        """Method to kill a piece from its coordinates on the board.
+
+        Parameters
+        ----------
+        coordinates : tuple of ints
+            (x, y) coordinates of cell on which is the piece to kill
+        """
         to_kill_piece = self.get_cell(coordinates[0], coordinates[1]).get_piece()
         to_kill_piece.set_killed()
 
         color = "white" if to_kill_piece.is_white() else "black"
-        ###print(color)
-        ###print(self.all_material[color]['alive'])
-        ###print(self.all_material[color]["alive"][to_kill_piece.type])
-        ###print(to_kill_piece)
-        ###print(to_kill_piece.type)
         self.all_material[color]["alive"][to_kill_piece.type].remove(to_kill_piece)
         self.all_material[color]["killed"][to_kill_piece.type].append(to_kill_piece)
 
     def transform_pawn(self, coordinates):
+        """Method to promote a pawn from its coordinates.
+
+        Parameters
+        ----------
+        coordinates : tuple of ints
+            (x, y) coordinates of the cell on which is Pawn to promote
+        promote_into : str
+            type of piece to promote the Pawn into. Default is "Queen" can also be "Rool", "Bishop" and "Knigh"
+        """
         pawn = self.get_cell(coordinates[0], coordinates[1]).get_piece()
         if not isinstance(pawn, material.Pawn):
             raise ValueError("Transforming piece that is not a Pawn")
@@ -585,6 +828,15 @@ class Board:
             self.all_material[color]["alive"]["queen"].append(new_queen)
 
     def promote_pawn(self, coordinates, promote_into="Queen"):
+        """Method to promote a pawn from its coordinates.
+
+        Parameters
+        ----------
+        coordinates : tuple of ints
+            (x, y) coordinates of the cell on which is Pawn to promote
+        promote_into : str
+            type of piece to promote the Pawn into. Default is "Queen" can also be "Rool", "Bishop" and "Knigh"
+        """
         pawn = self.get_cell(coordinates[0], coordinates[1]).get_piece()
         if not isinstance(pawn, material.Pawn):
             raise ValueError("Transforming piece that is not a Pawn")
@@ -597,10 +849,15 @@ class Board:
             self.all_material[color]["alive"]["queen"].append(new_piece)
 
     def draw(self, printing=True):
+        """Method to draw the board as a string and potentially print it in the terminal.
+
+        Parameters
+        ----------
+        printing : bool
+            Whether or not to print it in the terminal
+        """
         whole_text = "    |  0  |  1  |  2  |  3  |  4  |  5  |  6  |  7  |"
-        # ###print('    |  0  |  1  |  2  |  3  |  4  |  5  |  6  |  7  |')
         boarder_line = "+---+-----+-----+-----+-----+-----+-----+-----+-----+"
-        # ###print(boarder_line)
         whole_text += "\n"
         whole_text += boarder_line
         for i in range(8):
@@ -613,19 +870,50 @@ class Board:
                     current_line += cell.get_piece().draw()
                 current_line += "|"
             whole_text += "\n"
-            # ###print(current_line)
             whole_text += current_line
-            # ###print(boarder_line)
             whole_text += "\n"
             whole_text += boarder_line
-        print(whole_text + "\n")
+        if printing:
+            print(whole_text + "\n")
         return whole_text
 
 
 class Game:
+    """
+    Game class, used to play a chess game, interact with the board and move pieces.
+
+    Attributes
+    ----------
+    player1 : player.Player
+        player object that will be the one to play white pieces. For now, has to be a human player
+    ai : bool
+        Whether or not to play with AI. Is set to True, AI will play black pieces.
+    player2 : player.Player
+        player object that will play the black pieces. Can be human or AI player.
+    to_player_player: player1 or player2
+        Argument pointing to the player that has to play next. Initialized to white pieces player.
+    board: Board
+        Board object on which to play.
+    status: str
+        String indicating if the game is still active or if there is mat or pat.
+    played_moves: list
+        List storing all the played move during the game.
+    automatic draw: bool
+        Whether to draw the board in the terminal at each round.
+    """
+
     game_status = []
 
     def __init__(self, automatic_draw=True, ai=False):
+        """Initialization of the cell.
+
+        Parameters
+        ----------
+        automatic_draw : bool
+            Whether to draw the board in the terminal at each round.
+        ai : bool
+            Whether or not to play with AI. Is set to True, AI will play black pieces.
+        """
         self.player1 = Player(True)
         self.ai = ai
         if ai:
@@ -643,37 +931,103 @@ class Game:
         self.automatic_draw = automatic_draw
 
     def reset_game(self):
+        """Method to reset the game. Recreates the borad, the pieces and restarts the game."""
         self.board.reset()
         self.played_moves = []
         self.to_play_player = self.player1
 
     def to_fen(self):
+        """
+        Writes the board in fen.
+
+        Returns
+        -------
+        str
+            fen representation of the board.
+        """
         pieces, castling = self.board.to_fen()
         color_playing = "w" if self.to_play_player.is_white_side() else "b"
         return pieces + " " + color_playing + " " + castling + " - 0 1"
 
     def is_finished(self):
+        """
+        Method to know if the game is still active or finished (i.e. pat or mat)
+
+        Returns
+        -------
+        bool
+            Whether the game is finished or not.
+        """
         return self.status != "ACTIVE"
 
     def move_from_coordinates(self, player, start_x, start_y, end_x, end_y, extras={}):
+        """
+        Method to move a piece on the board from its coordinates. Creates the Move object from the coordinates and
+        calls the .move() method.
+
+        Parameters
+        ----------
+        player: player.Player
+            player that wants to move a piece
+        start_x: int
+            x-coordinate of the piece to move
+        start_y: int
+            y-coordinate of the piece to move
+        end_x: int
+            x-coordinate of the cell to move the piece to
+        end_y: int
+            x-coordinate of the cell to move the piece to
+        extras: dict
+            Dictionnary used to add additional data such as which type a piece a Pawn should be promoted to
+            if it reaches the other side of the board.
+
+        Returns
+        -------
+        self.move()
+            Method move of self.
+        """
+        # Get the cells from the coordinates
         start_cell = self.board.get_cell(start_x, start_y)
         end_cell = self.board.get_cell(end_x, end_y)
 
+        # Create the Move object
         move = Move(player, self.board, start_cell, end_cell, extras=extras)
 
+        # Move
         return self.move(move, player)
 
     def draw_board(self):
+        """
+        Draw the game's borad as a string in the terminal.
+        """
         return self.board.draw()
 
     def can_player_move(self, player):
-        ###print('CHECK IF PLAYER CAN MOVE')
+        """
+        Methods that verifies if a player can still move at least one piece.
+
+        Parameters
+        ----------
+        player: player.Player
+            player we want to check can still move at least one Piece.
+
+        Returns
+        -------
+        bool
+            Whether player can still move at least a piece.
+        """
+        # Checks all cells
         for i in range(8):
             for j in range(8):
+                # Checks Pieces on cells
                 selected_piece = self.board.get_cell(i, j).get_piece()
                 if selected_piece is not None:
+                    # Checks color of pices
                     if selected_piece.is_white() == player.is_white_side():
+                        # Checks if piece can move
                         possible_moves = selected_piece.get_potential_moves(i, j)
+
+                        # Verifies if the move is authorized
                         for k in range(len(possible_moves)):
                             selected_move = possible_moves[k]
                             selected_move = Move(
@@ -685,22 +1039,34 @@ class Game:
                             verified_move = selected_move.is_possible_move()
 
                             if verified_move:
-                                ###print('==== CHECK FINISHED ====')
                                 return True
-        ###print('==== CHECK FINISHED ====')
         return False
 
     def check_pat_mat(self, player):
+        """
+        Method to check if a player is in PAT or MAT situation.
+
+        Parameters
+        ----------
+        player: player.Player
+            player that needs to be checked
+
+        Returns
+        -------
+        int
+            0 if the player can move, 1 if PAT, 2 if MAT
+        """
         can_player_move = self.can_player_move(player)
-        print("CAN MOVE", can_player_move)
 
         if can_player_move:
             return 0
+        # If player cannot move any piece
         else:
             if player.is_white_side():
                 king = self.board.white_king
             else:
                 king = self.board.black_king
+            # If King is threatened, is mat otherwise, is pat
             is_mat = self.board.get_cell(king.x, king.y).is_threatened(
                 self.board, not player.is_white_side
             )
@@ -710,6 +1076,24 @@ class Game:
                 return 1
 
     def move(self, move, player):
+        """
+        Method to move a piece on the board from player and move objects.
+
+        Parameters
+        ----------
+        move: move.Move
+            move object ready to move a piece.
+        player: player.Player
+            player that wants to move a piece.
+
+        Returns
+        -------
+        bool
+            Whether the move has happened or not (if not means that it has been blocked by a rule). & Whether the
+            game keeps going. (Actually False when not moving should be True)
+        int or str
+            Status of the game: 0 nothing has happened or no winner, winner otherwise
+        """
         moved_piece = move.moved_piece
 
         # List of checks
@@ -718,20 +1102,23 @@ class Game:
             return False, 0
         assert moved_piece is not None
 
+        # Check that right player is playing
         if player != self.to_play_player:
             return False, 0
         assert player == self.to_play_player
 
+        # Check that the move is authorized
         allowed_move = move.is_possible_move()
         if not allowed_move:
             return False, 0
         elif moved_piece.is_white() != player.is_white_side():
             return False, 0
-
         else:
             assert moved_piece.is_white() == player.is_white_side()
+            # Actually move pieces
             move.move_pieces()
 
+        # Store move
         self.played_moves.append(move)
 
         # Change player
@@ -740,9 +1127,11 @@ class Game:
         else:
             self.to_play_player = self.player1
 
+        # Draw
         if self.automatic_draw:
             self.board.draw()
-        # self.save()
+
+        # Check status of Kings
         if self.board.white_king.is_killed():
             print("END OF THE GAME, BLACK HAS WON")
             return False, "black"
@@ -756,26 +1145,46 @@ class Game:
         return check_status, winner
 
     def update_status(self):
+        """
+        Checks the status of the game (on going, pat, mat) and returns it.
+
+        Returns
+        -------
+        bool
+            Whether the game keeps going or not.
+        int or str
+            Status of the game: 0 nothing has happened or no winner, winner otherwise
+
+        """
         game_status = self.check_pat_mat(self.player1)
+        # Pat
         if game_status == 1:
-            ###print('PAT, white & black do not differentiate each other')
             return False, "black&white"
+        # Mat
         elif game_status == 2:
-            ###print('END OF THE GAME, MAT DETECTED, BLACK HAS WON')
             return False, "black"
         else:
             game_status = self.check_pat_mat(self.player2)
+            # Pat
             if game_status == 1:
-                ###print('PAT, white & black do not differentiate each other')
                 return False, "black&white"
+            # Mat
             elif game_status == 2:
-                ###print('END OF THE GAME, MAT DETECTED WHITE HAS WON')
                 return False, "white"
+            # Keeps going
             else:
-                ###print('Game keeps going')
                 return True, ""
 
     def save(self, directory="debug_files"):
+        """
+        Method to save the state of the game as matplotlib figure.
+        Uses a str representation of the game moves as figure title.
+
+        Parameters
+        ----------
+        directory: str
+            directory in which to save the figure.
+        """
         draw_text = self.draw_board()
         draw_text = draw_text.replace("\x1b[32m", "")
         draw_text = draw_text.replace("\033[0m", "")
