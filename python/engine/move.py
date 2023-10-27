@@ -135,7 +135,6 @@ class Move:
             ###print("not castling becasuse king not moved")
             return False
         elif self.moved_piece.castling_done or self.moved_piece.has_moved:
-            ###print("castling already done or king has already moved")
             ###print(self.moved_piece.castling_done)
             ###print(self.moved_piece.has_moved)
             return False
@@ -144,10 +143,8 @@ class Move:
             if self.end.y == 6:  # Castling in the right
                 rook_to_move = self.board.get_cell(self.start.x, 7).get_piece()
                 if not isinstance(rook_to_move, material.Rook):
-                    ###print("no rook to move")
                     return False
                 elif rook_to_move.has_moved:
-                    ###print("rook has already moved")
                     return False
                 else:
                     rook_starting_coordinates = (self.start.x, 7)
@@ -165,10 +162,8 @@ class Move:
             elif self.end.y == 2:  # Castling on the left
                 rook_to_move = self.board.get_cell(self.start.x, 0).get_piece()
                 if not isinstance(rook_to_move, material.Rook):
-                    ###print('no rook to move')
                     return False
                 elif rook_to_move.has_moved:
-                    ###print('rook has already moved')
                     return False
                 else:
                     rook_starting_coordinates = (self.start.x, 0)
@@ -197,7 +192,6 @@ class Move:
             for cll in must_not_be_threatened_cells:
                 if cll.is_threatened(self.board, self.moved_piece.is_white()):
                     not_threatened_cells = False
-                    ###print("CELL THREATENED: ", cll.get_x(), cll.get_y())
 
             # Verifies that both conditions are met
             conditions_to_castling = [empty_cells_check, not_threatened_cells]

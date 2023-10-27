@@ -168,6 +168,26 @@ class Cell:
                     if piece_to_check.is_white() != threaten_color:
                         return True
 
+                elif piece_to_check is None:
+                    keep_going = True
+                    x_to_check += i
+                    y_to_check += j
+                    while 0 <= x_to_check < 8 and 0 <= y_to_check < 8 and keep_going:
+                        cell_to_check = board.get_cell(x_to_check, y_to_check)
+                        piece_to_check = cell_to_check.get_piece()
+                        if isinstance(piece_to_check, material.Rook) or isinstance(
+                            piece_to_check, material.Queen
+                        ):
+                            keep_going = False
+                            if piece_to_check.is_white() != threaten_color:
+                                return True
+                        elif piece_to_check is not None:
+                            keep_going = False
+                        else:
+                            x_to_check += i
+                            y_to_check += j
+
+        """
         # Rook + Queen
         # Going further
         keep_going = True
@@ -237,6 +257,7 @@ class Cell:
             elif piece_to_check is not None:
                 keep_going = False
             y_to_check -= 1
+        """
 
         # King + Queen + Bishop + Pawn
         # Checking direct surroundings
@@ -270,6 +291,27 @@ class Cell:
                     if piece_to_check.is_white() != threaten_color:
                         return True
 
+                elif piece_to_check is None:
+                    print("def")
+                    keep_going = True
+                    x_to_check += i
+                    y_to_check += j
+                    while 0 <= x_to_check < 8 and 0 <= y_to_check < 8 and keep_going:
+                        cell_to_check = board.get_cell(x_to_check, y_to_check)
+                        piece_to_check = cell_to_check.get_piece()
+
+                        if isinstance(piece_to_check, material.Bishop) or isinstance(
+                            piece_to_check, material.Queen
+                        ):
+                            keep_going = False
+                            if piece_to_check.is_white() != threaten_color:
+                                return True
+                        elif piece_to_check is not None:
+                            keep_going = False
+                        x_to_check += i
+                        y_to_check += j
+
+        """
         # Queen + Bishop
         keep_going = True
         x_to_check = self.x + 2
@@ -342,6 +384,7 @@ class Cell:
                 keep_going = False
             x_to_check -= 1
             y_to_check -= 1
+        """
 
         return False
 
