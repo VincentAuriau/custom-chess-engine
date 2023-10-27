@@ -32,7 +32,9 @@ def test_promotion_to_rook():
     game.move_from_coordinates(
         game.player1, 6, 6, 7, 6, extras={"promote_into": "rook"}
     )
-    assert game.board.to_fen()[0] == "rnbqkbnr/pppp1ppp/8/8/P7/7N/1PPPP2P/RNBQKBrR", game.board.to_fen()[0]
+    assert (
+        game.board.to_fen()[0] == "rnbqkbnr/pppp1ppp/8/8/P7/7N/1PPPP2P/RNBQKBrR"
+    ), game.board.to_fen()[0]
 
 
 def test_default_promotion():
@@ -49,7 +51,9 @@ def test_default_promotion():
     game.move_from_coordinates(game.player1, 5, 5, 6, 6)
     game.move_from_coordinates(game.player2, 5, 0, 4, 0)
     game.move_from_coordinates(game.player1, 6, 6, 7, 6)
-    assert game.board.to_fen()[0] == "rnbqkbnr/pppp1ppp/8/8/P7/7N/1PPPP2P/RNBQKBqR", game.board.to_fen()[0]
+    assert (
+        game.board.to_fen()[0] == "rnbqkbnr/pppp1ppp/8/8/P7/7N/1PPPP2P/RNBQKBqR"
+    ), game.board.to_fen()[0]
 
 
 def test_working_castling():
@@ -111,7 +115,9 @@ def test_en_passant():
     game.move_from_coordinates(game.player1, 3, 4, 4, 4)
     game.move_from_coordinates(game.player2, 6, 5, 4, 5)
     game.move_from_coordinates(game.player1, 4, 4, 5, 5)
-    assert game.board.to_fen()[0] == "rnbqkbnr/pppp1ppp/8/8/5P2/P4p2/1PPPP1PP/RNBQKBNR", game.board.to_fen()[0]
+    assert (
+        game.board.to_fen()[0] == "rnbqkbnr/pppp1ppp/8/8/5P2/P4p2/1PPPP1PP/RNBQKBNR"
+    ), game.board.to_fen()[0]
 
 
 def test_blocked_by_mat():
