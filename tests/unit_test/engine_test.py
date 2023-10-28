@@ -122,7 +122,7 @@ def test_en_passant():
 
 def test_blocked_by_mat():
     """Tests that if the king is checked cannot move unless it unchecks the king."""
-    game = engine.Game(automatic_draw=True)
+    game = engine.Game(automatic_draw=False)
     game.move_from_coordinates(game.player1, 1, 4, 3, 4)
     game.move_from_coordinates(game.player2, 6, 5, 4, 5)
     game.move_from_coordinates(game.player1, 0, 3, 4, 7)
@@ -132,7 +132,7 @@ def test_blocked_by_mat():
 
 def test_end_game():
     """Tests what happens when check & mat happens."""
-    game = engine.Game(automatic_draw=True)
+    game = engine.Game(automatic_draw=False)
     game.move_from_coordinates(game.player1, 1, 4, 3, 4)
     game.move_from_coordinates(game.player2, 6, 5, 4, 5)
     game.move_from_coordinates(game.player1, 0, 3, 4, 7)
