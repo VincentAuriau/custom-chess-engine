@@ -96,10 +96,29 @@ class Piece(object):
         bool
             Whether the movement is authorized by the piece possibilities or not.
         """
-        if start.get_x() == end.get_x() and start.get_y() == end.get_y():
+        x_start = start.get_x()
+        y_start = start.get_y()
+        x_end = end.get_x()
+        y_end = end.get_y()
+
+        # If material is already on the landing cell
+        if end.get_piece() is not None:
+            if end.get_piece().is_white() == self.is_white():
+                return False
+
+        if x_start == x_end and y_start == y_end:
             return False
         else:
-            return True
+            if x_start < 0 or x_end < 0:
+                return False
+            elif x_start > 7 or x_end > 7:
+                return False
+            elif y_start < 0 or y_end < 0:
+                return False
+            elif y_start > 7 or y_end > 7:
+                return False
+            else:
+                return True
 
     def can_move(self, board, move):
         """Method to verify if is a move is authorized in terms of movements.
@@ -237,6 +256,8 @@ class Pawn(Piece):
             Whether the movement is authorized by the piece possibilities or not.
         """
         # Check if there is a piece on the landing cell
+        if not super().piece_move_authorized(start=start, end=end):
+            return False
         if end.get_piece() is not None:
             # check if there is not another piece of same color
             if end.get_piece().is_white() == self.is_white():
@@ -482,20 +503,16 @@ class Bishop(Piece):
         bool
             Whether the movement is authorized by the piece possibilities or not.
         """
-        if start.get_x() == end.get_x() and start.get_y() == end.get_y():
+        if not super().piece_move_authorized(start=start, end=end):
             return False
+
+        # Checking movemement
+        dx = end.get_x() - start.get_x()
+        dy = end.get_y() - start.get_y()
+        if abs(dx) == abs(dy):
+            return True
         else:
-            # If material is already on the landing cell
-            if end.get_piece() is not None:
-                if end.get_piece().is_white() == self.is_white():
-                    return False
-            # Checking movemement
-            dx = end.get_x() - start.get_x()
-            dy = end.get_y() - start.get_y()
-            if abs(dx) == abs(dy):
-                return True
-            else:
-                return False
+            return False
 
     def can_move(self, board, move):
         """Method to verify if a move is authorized within a board.
@@ -656,21 +673,16 @@ class Rook(Piece):
         bool
             Whether the movement is authorized by the piece possibilities or not.
         """
-        if start.get_x() == end.get_x() and start.get_y() == end.get_y():
+        if not super().piece_move_authorized(start=start, end=end):
             return False
-        else:
-            # Checking if material is already on the landing cell
-            if end.get_piece() is not None:
-                if end.get_piece().is_white() == self.is_white():
-                    return False
 
-            # Checking movement
-            dx = end.get_x() - start.get_x()
-            dy = end.get_y() - start.get_y()
-            if dx == 0 or dy == 0:
-                return True
-            else:
-                return False
+        # Checking movement
+        dx = end.get_x() - start.get_x()
+        dy = end.get_y() - start.get_y()
+        if dx == 0 or dy == 0:
+            return True
+        else:
+            return False
 
     def can_move(self, board, move):
         """Method to verify if a move is authorized within a board.
@@ -826,9 +838,8 @@ class Knight(Piece):
         bool
             Whether the movement is authorized by the piece possibilities or not.
         """
-        if end.get_piece() is not None:
-            if end.get_piece().is_white() == self.is_white():
-                return False
+        if not super().piece_move_authorized(start=start, end=end):
+            return False
 
         dx = start.get_x() - end.get_x()
         dy = start.get_y() - end.get_y()
@@ -959,16 +970,14 @@ class Queen(Piece):
         bool
             Whether the movement is authorized by the piece possibilities or not.
         """
-        if start.get_x() == end.get_x() and start.get_y() == end.get_y():
-            return False
-        else:
-            if end.get_piece() is not None:
-                if end.get_piece().is_white() == self.is_white():
-                    return False
-            dx = end.get_x() - start.get_x()
-            dy = end.get_y() - start.get_y()
 
-            return (dx == 0) or (dy == 0) or (abs(dx) == abs(dy))
+        if not super().piece_move_authorized(start=start, end=end):
+            return False
+        
+        dx = end.get_x() - start.get_x()
+        dy = end.get_y() - start.get_y()
+
+        return (dx == 0) or (dy == 0) or (abs(dx) == abs(dy))
 
     def can_move(self, board, move):
         """Method to verify if a move is authorized within a board.
@@ -1188,11 +1197,9 @@ class King(Piece):
         bool
             Whether the movement is authorized by the piece possibilities or not.
         """
-        if start.get_x() == end.get_x() and start.get_y() == end.get_y():
+        
+        if not super().piece_move_authorized(start=start, end=end):
             return False
-        if end.get_piece() is not None:
-            if end.get_piece().is_white() == self.is_white():
-                return False
         dx = end.get_x() - start.get_x()
         dy = end.get_y() - start.get_y()
 
