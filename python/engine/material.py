@@ -973,7 +973,7 @@ class Queen(Piece):
 
         if not super().piece_move_authorized(start=start, end=end):
             return False
-        
+
         dx = end.get_x() - start.get_x()
         dy = end.get_y() - start.get_y()
 
@@ -1197,7 +1197,7 @@ class King(Piece):
         bool
             Whether the movement is authorized by the piece possibilities or not.
         """
-        
+
         if not super().piece_move_authorized(start=start, end=end):
             return False
         dx = end.get_x() - start.get_x()
