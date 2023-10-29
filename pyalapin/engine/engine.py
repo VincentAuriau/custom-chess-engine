@@ -413,10 +413,9 @@ class Board:
             True if you want to start from an existing board.
         """
         if not empty_init:
-            self.board = None
             self.white_king, self.black_king, self.all_material = self._reset_board()
 
-    def deepcopy(self, memodict={}):
+    def deepcopy(self, light=True):
         """Method to create an uncorrelated clone of the board.
 
         Returns
@@ -427,12 +426,14 @@ class Board:
         copied_object = Board(empty_init=True)
         board = [[Cell(i, j, None) for j in range(8)] for i in range(8)]
         copied_object.board = board
-        copied_material = self.deep_copy_material()
-        white_king = copied_material["white"]["alive"]["king"][0]
-        black_king = copied_material["black"]["alive"]["king"][0]
+        if light:
+            copied_material = self.light_deep_copy_material()
+        else:
+            copied_material = self.deep_copy_material()
+        copied_object.white_king = copied_material["white"]["alive"]["king"][0]
+        copied_object.black_king = copied_material["black"]["alive"]["king"][0]
         copied_object.all_material = copied_material
-        copied_object.white_king = white_king
-        copied_object.black_king = black_king
+
         for piece_list in copied_material["white"]["alive"].values():
             for piece in piece_list:
                 copied_object.get_cell(piece.x, piece.y).set_piece(piece)
@@ -441,6 +442,63 @@ class Board:
                 copied_object.get_cell(piece.x, piece.y).set_piece(piece)
 
         return copied_object
+
+    def light_deep_copy_material(self):
+        """Method to create an uncorrelated clone of all the pieces on the board. Light version
+        where only alive pieces are returned.
+
+        Returns
+        -------
+        dict of Pieces
+            Exact copy of self.all_material.
+        """
+        material = {
+            "white": {
+                "alive": {
+                    "pawn": [],
+                    "knight": [],
+                    "bishop": [],
+                    "rook": [],
+                    "queen": [],
+                    "king": [],
+                },
+                "killed": {
+                    "pawn": [],
+                    "knight": [],
+                    "bishop": [],
+                    "rook": [],
+                    "queen": [],
+                    "king": [],
+                },
+            },
+            "black": {
+                "alive": {
+                    "pawn": [],
+                    "knight": [],
+                    "bishop": [],
+                    "rook": [],
+                    "queen": [],
+                    "king": [],
+                },
+                "killed": {
+                    "pawn": [],
+                    "knight": [],
+                    "bishop": [],
+                    "rook": [],
+                    "queen": [],
+                    "king": [],
+                },
+            },
+        }
+
+        for color in ["white", "black"]:
+            for status in ["alive"]:
+                for piece_type in ["pawn", "knight", "bishop", "rook", "queen", "king"]:
+                    for piece in self.all_material[color][status][piece_type]:
+                        material[color][status][piece_type].append(
+                            piece.piece_deepcopy()
+                        )
+        return material
 
     def deep_copy_material(self):
         """Method to create an uncorrelated clone of all the pieces on the board, killed and not killed.
@@ -498,7 +556,7 @@ class Board:
                         )
         return material
 
-    def __deepcopy__(self, memodict={}):
+    def _deepcopy__(self, memodict={}):
         """Method to create an uncorrelated clone of the board.
 
         Returns

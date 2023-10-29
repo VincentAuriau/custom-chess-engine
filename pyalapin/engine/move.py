@@ -337,7 +337,7 @@ class Move:
         # Sets the different movement related attributes of Pieces
         self._set_moved_attribute()
 
-    def is_possible_move(self):
+    def is_possible_move(self, check_chess=True):
         # REFONDRE, particulièrement, faire en sorte qu'on ne vérifie chaque condition qu'une seule fois
         # Why castling is checked here ?
         """
@@ -439,9 +439,10 @@ class Move:
             return future_board.get_cell(king.x, king.y).is_threatened(future_board, king.is_white())
         """
         # Checks if the player's King is threatened after the move.
-        is_king_threatened_in_future = self._work_future_to_check_chess()
-        if is_king_threatened_in_future:
-            return False
+        if check_chess:
+            is_king_threatened_in_future = self._work_future_to_check_chess()
+            if is_king_threatened_in_future:
+                return False
 
         return True
 

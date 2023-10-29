@@ -1,7 +1,7 @@
 import copy
 import sys
 
-sys.path.append("../")
+sys.path.append("pyalapin/")
 
 import engine.engine as engine
 

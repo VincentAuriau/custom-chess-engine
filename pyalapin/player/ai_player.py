@@ -164,7 +164,7 @@ class EasyAIPlayer(Player):
                     )
                     # Keep only of possible
                     # Test letting this test in _alpha_beta
-                    if selected_move.is_possible_move():
+                    if selected_move.is_possible_move(check_chess=False):
                         possible_moves.append(selected_move)
 
         return possible_moves
@@ -337,21 +337,19 @@ class EasyAIPlayer(Player):
 
                 best_move = [best_move, p_mv][np.argmax([best_score, score])]
                 best_score = np.max([best_score, score])
-                ###print("BEST SCORE", best_score)
-                ###print("BEST MOVE", best_move, best_move.start.x, best_move.start.y, best_move.end.x, best_move.end.y)
-                if best_score >=     beta:
+                
+                if best_score >= beta:
                     return best_score, best_move
                 alpha = np.max((alpha, best_score))
-            ###print("BBBBESTTT MOOVEEE", best_move, best_move.start.x, best_move.start.y, best_move.end.x, best_move.end.y, best_score)
+            
             return best_score, best_move
 
         else:
             possible_moves = self._get_possible_moves(init_board, is_white=is_white)
-            ###print(depth, "nb moves:", len(possible_moves))
+
             best_score = 10000
             best_move = None
             for p_mv in possible_moves:
-                # p_mv_ = pickle.loads(pickle.dumps(p_mv, -1))
                 p_mv_ = p_mv.deepcopy()
                 p_mv_.move_pieces()
                 score, _ = self._alpha_beta(
@@ -362,12 +360,10 @@ class EasyAIPlayer(Player):
                     beta=beta,
                     is_white=is_white,
                 )
-                ###print(score, p_mv.start.x, p_mv.start.y, p_mv.end.x, p_mv.end.y)
+
                 best_move = [best_move, p_mv][np.argmin([best_score, score])]
                 best_score = np.min([best_score, score])
-                ###print("BEST SCORE", best_score)
-                ###print(np.argmax([best_score, score]))
-                ###print("BEST MOVE", best_move, best_move.start.x, best_move.start.y, best_move.end.x, best_move.end.y)
+                
                 if best_score <= alpha:
                     return best_score, best_move
                 beta = np.min([beta, best_score])
@@ -406,20 +402,28 @@ class EasyAIPlayer(Player):
                             return selected_move
         ###print('No moved found, aborting...')
 
-    def time_to_play(self, board, depth=3):
-        board.draw()
-        current_score = self._score_board(board)
-        ###print("SCORE:", current_score)
+    def time_to_play(self, board, depth=3, draw_board=False):
+        """Method that must be called to ask AI player to move.
 
-        # all_possible_moves = self._get_possible_moves(board)
-        # sel_move, sel_score = self._select_move_from_score(all_possible_moves)
-        # sel_move, sel_score = self._search_tree(board, depth=3)
-        board.draw()
+        Parameters
+        ----------
+        board : engine.Board
+            board on which to play
+        depth: int
+            Tree best move search depth
+        draw_board: bool
+            Whether or not to draw the board in terminal
+
+        Returns
+        -------
+        move.Move
+            Best move according to board and parameters
+        """
+        if draw_board:
+            board.draw()
+        # current_score = self._score_board(board)
         sel_score, sel_move = self._alpha_beta(board, depth=depth)
-        board.draw()
-        ###print("future score:", sel_score)
-        ###print(sel_move.start.x, sel_move.start.y, sel_move.end.x, sel_move.end.y, self.color)
-
+        
         return sel_move
 
     def _score_board(self, board):
@@ -441,6 +445,15 @@ class EasyAIPlayer(Player):
             for piece in board.all_material[self.color]["alive"][piece_type]:
                 score += self.piece_weights[piece_type]
                 score += self.piece_positions_weights[piece_type][piece.x][piece.y]
+        own_king = board.all_material[self.color]["alive"]["king"]
+        if len(own_king) == 0:
+            score -= 1000 
+        else:
+            own_king = own_king[0]
+            if board.get_cell(own_king.x, own_king.y).is_threatened(
+                board, own_king.is_white()
+            ):
+                score -= 1000
 
         adv_color = "white" if self.color == "black" else "black"
         # Negative score for opponent pieces.
@@ -448,4 +461,14 @@ class EasyAIPlayer(Player):
             for piece in board.all_material[adv_color]["alive"][piece_type]:
                 score -= self.piece_weights[piece_type]
                 score -= self.piece_positions_weights[piece_type][piece.x][piece.y]
+        adv_king = board.all_material[adv_color]["alive"]["king"]
+
+        if len(adv_king) == 0:
+            score -= 1000 
+        else:
+            adv_king = adv_king[0]
+            if board.get_cell(adv_king.x, adv_king.y).is_threatened(
+                board, adv_king.is_white()
+            ):
+                score += 1000
         return score
