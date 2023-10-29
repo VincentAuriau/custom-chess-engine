@@ -1,7 +1,6 @@
 import sys
 
-sys.path.append("../../python")
-sys.path.append("python")
+sys.path.append("pyalapin")
 
 import engine.engine as engine
 import engine.material as material
