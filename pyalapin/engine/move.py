@@ -1,7 +1,7 @@
 import copy
 import pickle
 
-import engine.material as material
+import pyalapin.engine.material as material
 
 
 class Move:

@@ -1,6 +1,6 @@
 from abc import abstractmethod
 
-from engine.color import Color
+from pyalapin.engine.color import Color
 
 
 class Piece(object):

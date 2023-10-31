@@ -2,9 +2,9 @@ import copy
 import pickle
 import numpy as np
 
-from player.player import Player
-import engine.material as material
-import engine.move as move
+from pyalapin.player.player import Player
+import pyalapin.engine.material as material
+import pyalapin.engine.move as move
 
 
 class EasyAIPlayer(Player):

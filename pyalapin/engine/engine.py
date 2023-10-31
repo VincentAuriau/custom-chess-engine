@@ -7,11 +7,11 @@
 
 import copy
 
-from engine.move import Move
-from player.player import Player, AIRandomPlayer
-from player.ai_player import EasyAIPlayer
-from player.my_player import MyPlayer
-import engine.material as material
+from pyalapin.engine.move import Move
+from pyalapin.player.player import Player, AIRandomPlayer
+from pyalapin.player.ai_player import EasyAIPlayer
+from pyalapin.player.my_player import MyPlayer
+import pyalapin.engine.material as material
 
 
 class Color:
