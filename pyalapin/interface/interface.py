@@ -38,6 +38,7 @@ class LoginScreen(GridLayout):
 
 class DisplayableCell(Button):
     """Base class to represent a Cell as Button"""
+
     def __init__(self, row, column, **kwargs):
         """
         Initialization of the representation of the cell.
@@ -78,6 +79,7 @@ class TableScreen(GridLayout):
     cells: list of DisplayableCells
         List of cells constituting the board
     """
+
     def __init__(self, game, **kwargs):
         """
         Initialization of the board display.
@@ -125,7 +127,7 @@ class TableScreen(GridLayout):
                     path_to_img = c_img
 
                     if piece.is_white():
-                        piece_color = (1, 1, 1, 1) # For text color, could be removed
+                        piece_color = (1, 1, 1, 1)  # For text color, could be removed
                         path_to_img += "w"
                     else:
                         piece_color = (0, 0, 0, 1)
@@ -152,7 +154,7 @@ class TableScreen(GridLayout):
                 else:
                     # No piece to display
                     piece = ""
-                    piece_color = (1, 1, 1, 1) # For text color could be removed
+                    piece_color = (1, 1, 1, 1)  # For text color could be removed
                     path_to_img = c_img + ".png"
                     # Unclicked
                     path_to_down_img = "down_" + path_to_img
@@ -269,7 +271,7 @@ class TableScreen(GridLayout):
             self.cells[event.row][event.column].background_down,
             self.cells[event.row][event.column].background_normal,
         )
-        # If no previous cell has been clicked, then it's the start cell that has been clicked, 
+        # If no previous cell has been clicked, then it's the start cell that has been clicked,
         # In this case it is store, waiting fot the click on the landinc cell.
         if self.first_cell_clicked is None:
             self.first_cell_clicked = (event.row, event.column)
@@ -325,9 +327,14 @@ class TableScreen(GridLayout):
             # In this case, game was not possible, reset last clicks so that the player can restart
             # and redefine its move.
             else:
-                popup = Popup(title='Unable Move', 
-                    content=Label(text='Your selected move is not possible, please, select another one.'), 
-                    size_hint=(None, None), size=(15, 15))
+                popup = Popup(
+                    title="Unable Move",
+                    content=Label(
+                        text="Your selected move is not possible, please, select another one."
+                    ),
+                    size_hint=(None, None),
+                    size=(15, 15),
+                )
                 popup.open()
 
             # Resets values befor next move
@@ -353,6 +360,7 @@ class MyApp(App):
     """
     Main app to use to play game, by calling MyApp().buil() and then player.
     """
+
     def __init__(self, play_with_ai=False, **kwargs):
         """
         Initialization, with precision whether or not playing with AI.

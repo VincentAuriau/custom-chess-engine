@@ -985,7 +985,6 @@ class Game:
                 self.player1 = player1
 
         elif player1 is None:
-
             if ai:
                 self.player1 = EasyAIPlayer(True)
             else:
