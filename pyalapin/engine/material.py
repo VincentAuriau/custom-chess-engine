@@ -416,7 +416,6 @@ class Pawn(Piece):
 
         return possible_moves
 
-
     @abstractmethod
     def get_threatened_cells_on_board(self, board):
         """
@@ -436,7 +435,6 @@ class Pawn(Piece):
 
         cells_threatened = []
         if self.is_white():
-
             if x < 7:
                 # Diagonal cells
                 if y - 1 >= 0:
@@ -446,7 +444,6 @@ class Pawn(Piece):
 
         # Symmetric for black pawns
         else:
-
             if x > 0:
                 if y - 1 >= 0:
                     cells_threatened.append((x - 1, y - 1))
