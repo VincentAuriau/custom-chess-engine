@@ -3,7 +3,7 @@ import sys
 sys.path.append("pyalapin")
 
 import pyalapin.engine.engine as engine
-import pyalaping.engine.move as move
+import pyalapin.engine.move as move
 import time
 
 import player.ai_player as ai_player
