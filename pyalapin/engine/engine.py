@@ -961,7 +961,7 @@ class Game:
 
     game_status = []
 
-    def __init__(self, automatic_draw=True, ai=False):
+    def __init__(self, player1=None, player2=None, automatic_draw=True, ai=False):
         """Initialization of the cell.
 
         Parameters
@@ -971,14 +971,31 @@ class Game:
         ai : bool
             Whether or not to play with AI. Is set to True, AI will play black pieces.
         """
-        self.player1 = Player(True)
-        self.ai = ai
-        if ai:
-            # self.player2 = AIRandomPlayer(False)
-            self.player2 = EasyAIPlayer(False)
-            # self.player2 = MyPlayer(white_side=False, path_to_model="./test1")
+
+        # If ai = True and both players are None, AI plays by default black pieces
+        if player2 is None:
+            if ai:
+                self.player2 = EasyAIPlayer(False)
+            else:
+                self.player2 = Player(False)
+
+            if player1 is None:
+                self.player1 = Player(True)
+            else:
+                self.player1 = player1
+
+        elif player1 is None:
+
+            if ai:
+                self.player1 = EasyAIPlayer(True)
+            else:
+                self.player1 = Player(True)
+            self.player2 = player2
         else:
-            self.player2 = Player(False)
+            self.player1 = player1
+            self.player2 = player2
+
+        self.ai = ai
         self.to_play_player = self.player1
 
         self.board = Board()
