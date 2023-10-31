@@ -20,6 +20,7 @@ class EasyAIPlayer(Player):
     pieces_positions_weights: dict
         Values for each piece to be on a certain position.
     """
+
     piece_weights = {
         "pawn": 10,
         "knight": 30,
@@ -337,11 +338,11 @@ class EasyAIPlayer(Player):
 
                 best_move = [best_move, p_mv][np.argmax([best_score, score])]
                 best_score = np.max([best_score, score])
-                
+
                 if best_score >= beta:
                     return best_score, best_move
                 alpha = np.max((alpha, best_score))
-            
+
             return best_score, best_move
 
         else:
@@ -363,7 +364,7 @@ class EasyAIPlayer(Player):
 
                 best_move = [best_move, p_mv][np.argmin([best_score, score])]
                 best_score = np.min([best_score, score])
-                
+
                 if best_score <= alpha:
                     return best_score, best_move
                 beta = np.min([beta, best_score])
@@ -423,7 +424,7 @@ class EasyAIPlayer(Player):
             board.draw()
         # current_score = self._score_board(board)
         sel_score, sel_move = self._alpha_beta(board, depth=depth)
-        
+
         return sel_move
 
     def _score_board(self, board):
@@ -447,7 +448,7 @@ class EasyAIPlayer(Player):
                 score += self.piece_positions_weights[piece_type][piece.x][piece.y]
         own_king = board.all_material[self.color]["alive"]["king"]
         if len(own_king) == 0:
-            score -= 1000 
+            score -= 1000
         else:
             own_king = own_king[0]
             if board.get_cell(own_king.x, own_king.y).is_threatened(
@@ -464,7 +465,7 @@ class EasyAIPlayer(Player):
         adv_king = board.all_material[adv_color]["alive"]["king"]
 
         if len(adv_king) == 0:
-            score -= 1000 
+            score -= 1000
         else:
             adv_king = adv_king[0]
             if board.get_cell(adv_king.x, adv_king.y).is_threatened(
