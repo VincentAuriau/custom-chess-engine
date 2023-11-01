@@ -960,11 +960,15 @@ class Game:
         List storing all the played move during the game.
     automatic draw: bool
         Whether to draw the board in the terminal at each round.
+    save_pgn: bool
+        Whether to keep track of the moves with PGN.
+    history: list of str
+        PGN representation of the past move of the game.
     """
 
     game_status = []
 
-    def __init__(self, player1=None, player2=None, automatic_draw=True, ai=False):
+    def __init__(self, player1=None, player2=None, automatic_draw=True, ai=False, save_pgn=False):
         """Initialization of the cell.
 
         Parameters
@@ -1003,6 +1007,9 @@ class Game:
         self.board = Board()
         self.status = "ACTIVE"
         self.played_moves = []
+        self.save_pgn = save_pgn
+        if self.save_pgn:
+            self.history = []
 
         self.automatic_draw = automatic_draw
 
@@ -1010,6 +1017,7 @@ class Game:
         """Method to reset the game. Recreates the borad, the pieces and restarts the game."""
         self.board.reset()
         self.played_moves = []
+        self.history = []
         self.to_play_player = self.player1
 
     def to_fen(self):
@@ -1196,6 +1204,8 @@ class Game:
 
         # Store move
         self.played_moves.append(move)
+        if self.save_pgn:
+            self.history.append(move.to_pgn())
 
         # Change player
         if self.to_play_player == self.player1:
@@ -1275,3 +1285,14 @@ class Game:
         plt.axis("off")
         plt.tight_layout()
         plt.savefig(os.path.join(directory, str(len(self.played_moves)) + ".png"))
+
+    def to_pgn(self):
+        assert self.save_pgn
+        pgn = ""
+        for i in range(len(self.history)):
+            if i % 2 == 0:
+                pgn += f"{int(i/2)+1}."
+            pgn += self.history[i]
+            pgn += " "
+
+        return pgn
