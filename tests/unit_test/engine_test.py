@@ -149,5 +149,5 @@ def test_pgn():
     game.move_from_coordinates(game.player2, 6, 5, 4, 5)
     game.move_from_coordinates(game.player1, 0, 3, 4, 7)
     game.move_from_coordinates(game.player2, 6, 6, 5, 6)
-
-    assert game.to_pgn() == "1.e4 f5 2.Qh5+ g6"
+    print(game.to_pgn())
+    assert game.to_pgn() == "1. e2e4 f7f5 2. Qd1h5+ g7g6"

@@ -116,13 +116,13 @@ class Move:
             pgn representation of the move
         """
         rows = ["a", "b", "c", "d", "e", "f", "g", "h"]
-        start = f"{rows[self.start.y]}{self.start.x + 1} "
+        start = f"{rows[self.start.y]}{self.start.x + 1}"
         end = f"{rows[self.end.y]}{self.end.x + 1}"
         piece = self.moved_piece.get_str().replace(" ", "")
         if isinstance(self.moved_piece, material.Pawn):
             piece = ""
         if self.killed_piece is not None:
-            start = "x"
+            start += "x"
         elif self.is_castling:
             if (self.moved_piece.is_white() and self.end.y == 1) or (
                 not self.moved_piece.is_white() and self.end.y == 6
@@ -139,9 +139,8 @@ class Move:
             board=self.board, threaten_color=not self.player.white_side
         ):
             end += "+"
-
-        print(piece, start, end)
-        return f"{piece}{end}"
+        print(f"{piece}{start}{end}")
+        return f"{piece}{start}{end}"
 
     def _set_castling_done(self):
         """

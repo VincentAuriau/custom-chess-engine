@@ -1293,7 +1293,7 @@ class Game:
         pgn = ""
         for i in range(len(self.history)):
             if i % 2 == 0:
-                pgn += f"{int(i/2)+1}."
+                pgn += f"{int(i/2)+1}. "
             pgn += self.history[i]
             pgn += " "
 
