@@ -968,7 +968,9 @@ class Game:
 
     game_status = []
 
-    def __init__(self, player1=None, player2=None, automatic_draw=True, ai=False, save_pgn=False):
+    def __init__(
+        self, player1=None, player2=None, automatic_draw=True, ai=False, save_pgn=False
+    ):
         """Initialization of the cell.
 
         Parameters

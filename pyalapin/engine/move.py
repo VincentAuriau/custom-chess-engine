@@ -124,12 +124,20 @@ class Move:
         if self.killed_piece is not None:
             start = "x"
         elif self.is_castling:
-            if (self.moved_piece.is_white() and self.end.y == 1) or (not self.moved_piece.is_white() and self.end.y == 6):
+            if (self.moved_piece.is_white() and self.end.y == 1) or (
+                not self.moved_piece.is_white() and self.end.y == 6
+            ):
                 piece = "O-O-O"
                 start = ""
                 end = ""
-        king = self.board.white_king if not self.player.white_side else self.board.black_king
-        if self.board.get_cell(king.x, king.y).is_threatened(board=self.board, threaten_color=not self.player.white_side):
+        king = (
+            self.board.white_king
+            if not self.player.white_side
+            else self.board.black_king
+        )
+        if self.board.get_cell(king.x, king.y).is_threatened(
+            board=self.board, threaten_color=not self.player.white_side
+        ):
             end += "+"
 
         print(piece, start, end)
