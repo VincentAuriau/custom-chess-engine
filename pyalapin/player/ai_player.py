@@ -19,6 +19,8 @@ class EasyAIPlayer(Player):
         Values of the different pieces.
     pieces_positions_weights: dict
         Values for each piece to be on a certain position.
+    random_coeff: int
+        Coefficient of randomness that will be added to the move score.
     """
 
     piece_weights = {
@@ -92,16 +94,19 @@ class EasyAIPlayer(Player):
         ],
     }
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, white_side, random_coeff=0, *args, **kwargs):
         """Initialization of the player.
 
         Parameters
         ----------
         white_side : bool
             Whether the player plays with white or black pieces.
+        random_coeff: int
+            Coefficient of randomness that will be added to the move score.
         """
-        super().__init__(*args, **kwargs)
+        super().__init__(white_side=white_side, *args, **kwargs)
         self.color = "white" if self.white_side else "black"
+        self.random_coeff = random_coeff
         if self.white_side:
             # Reverse position values for white pieces player
             for key, values in self.piece_positions_weights.items():
@@ -335,9 +340,9 @@ class EasyAIPlayer(Player):
                     beta=beta,
                     is_white=not is_white,
                 )
-
-                best_move = [best_move, p_mv][np.argmax([best_score, score])]
-                best_score = np.max([best_score, score])
+                random_noise = np.random.randint(0, self.random_coeff)
+                best_move = [best_move, p_mv][np.argmax([best_score, score + random_noise])]
+                best_score = np.max([best_score, score + random_noise])
 
                 if best_score >= beta:
                     return best_score, best_move
@@ -368,7 +373,6 @@ class EasyAIPlayer(Player):
                 if best_score <= alpha:
                     return best_score, best_move
                 beta = np.min([beta, best_score])
-            ###print("BBBBESTTT MOOVEEE", best_move, best_move.start.x, best_move.start.y, best_move.end.x, best_move.end.y, best_score)
             return best_score, best_move
 
     def random_move(self, board):
