@@ -1282,6 +1282,7 @@ class Game:
         draw_text = draw_text.replace("\x1b[31m", "")
         import os
         import matplotlib.pyplot as plt
+
         """
         plt.rc("figure", figsize=(12, 7))
         plt.text(
@@ -1291,7 +1292,9 @@ class Game:
         plt.tight_layout()
         plt.savefig(os.path.join(directory, str(len(self.played_moves)) + ".png"))
         """
-        with open(os.path.join(directory, str(len(self.played_moves)) + ".txt"), "w") as f:
+        with open(
+            os.path.join(directory, str(len(self.played_moves)) + ".txt"), "w"
+        ) as f:
             f.writelines(draw_text)
 
     def to_pgn(self):
