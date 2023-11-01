@@ -315,11 +315,19 @@ class TableScreen(GridLayout):
                     if game_is_on[0]:
                         self.update()
                         (
-                            self.cells[ai_move.start.x][ai_move.start.y].background_normal,
-                            self.cells[ai_move.start.x][ai_move.start.y].background_down,
+                            self.cells[ai_move.start.x][
+                                ai_move.start.y
+                            ].background_normal,
+                            self.cells[ai_move.start.x][
+                                ai_move.start.y
+                            ].background_down,
                         ) = (
-                            self.cells[ai_move.start.x][ai_move.start.y].background_down,
-                            self.cells[ai_move.start.x][ai_move.start.y].background_normal,
+                            self.cells[ai_move.start.x][
+                                ai_move.start.y
+                            ].background_down,
+                            self.cells[ai_move.start.x][
+                                ai_move.start.y
+                            ].background_normal,
                         )
                         (
                             self.cells[ai_move.end.x][ai_move.end.y].background_normal,
