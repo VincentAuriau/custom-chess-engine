@@ -152,10 +152,9 @@ class Cell:
 
         # King + Rook + Queen
         # Checking direct surroundings
-        for i, j in [(1, 0), (0, -1), (-1, 0), (0, -1)]:
+        for i, j in [(1, 0), (0, -1), (-1, 0), (0, 1)]:
             x_to_check = self.x + i
             y_to_check = self.y + j
-
             if 0 <= x_to_check < 8 and 0 <= y_to_check < 8:
                 cell_to_check = board.get_cell(x_to_check, y_to_check)
                 piece_to_check = cell_to_check.get_piece()
