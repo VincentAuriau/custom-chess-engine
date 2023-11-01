@@ -2,12 +2,27 @@ import copy
 import pickle
 import numpy as np
 
-from player.player import Player
-import engine.material as material
-import engine.move as move
+from pyalapin.player.player import Player
+import pyalapin.engine.material as material
+import pyalapin.engine.move as move
 
 
 class EasyAIPlayer(Player):
+    """
+    AI Player class with simple rules and alpha/beta pruning to speed up research of the best move in the future.
+
+    Attributes
+    ----------
+    is_white_side : bool
+        Whether the player plays with white or black Pieces.
+    piece_weights: dict
+        Values of the different pieces.
+    pieces_positions_weights: dict
+        Values for each piece to be on a certain position.
+    random_coeff: int
+        Coefficient of randomness that will be added to the move score.
+    """
+
     piece_weights = {
         "pawn": 10,
         "knight": 30,
@@ -79,10 +94,21 @@ class EasyAIPlayer(Player):
         ],
     }
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+    def __init__(self, white_side, random_coeff=0, *args, **kwargs):
+        """Initialization of the player.
+
+        Parameters
+        ----------
+        white_side : bool
+            Whether the player plays with white or black pieces.
+        random_coeff: int
+            Coefficient of randomness that will be added to the move score.
+        """
+        super().__init__(white_side=white_side, *args, **kwargs)
         self.color = "white" if self.white_side else "black"
-        if self.color == "white":
+        self.random_coeff = random_coeff
+        if self.white_side:
+            # Reverse position values for white pieces player
             for key, values in self.piece_positions_weights.items():
                 new_values = []
                 for i in range(len(values)):
@@ -90,9 +116,25 @@ class EasyAIPlayer(Player):
                 self.piece_positions_weights[key] = new_values
 
     def __str__(self):
+        """Initialization of the player.
+
+        Returns
+        -------
+        str
+            String representation of the player
+        """
         return "EasyAIPlayer"
 
     def _get_possible_moves(self, board, is_white=None):
+        """Initialization of the player.
+
+        Parameters
+        ----------
+        board: Board
+            Board on which to look for the possible moves.
+        is_white : bool or None
+            If we want the possible moves for a different player, can be used.
+        """
         if is_white is None:
             is_white = self.white_side()
 
@@ -109,48 +151,72 @@ class EasyAIPlayer(Player):
         else:
             player = self
         color = {True: "white", False: "black"}[is_white]
+
         possible_moves = []
-        ###print("LOOKING FOR MOVES FOR COLOR", color)
+        # Iterate of pieces
         for type_piece in board.all_material[color]["alive"].keys():
-            ###print('               >>>>>>>>>>>>>>>>> TYPE PCE', type_piece)
             for piece in board.all_material[color]["alive"][type_piece]:
+                # Get potential moves as coordinates
                 piece_available_moves = piece.get_potential_moves(piece.x, piece.y)
+
+                # Iterate over piece possible moves
                 for mv in piece_available_moves:
-                    if isinstance(piece, material.Pawn):
-                        ###print("POSSIBLE MOVES FOR PAWN", piece_available_moves)
-                        pass
+                    # Verify that the move is actually possible
                     selected_move = move.Move(
                         player,
                         board,
                         board.get_cell(piece.x, piece.y),
                         board.get_cell(mv[0], mv[1]),
                     )
-                    if selected_move.is_possible_move():
+                    # Keep only of possible
+                    # Test letting this test in _alpha_beta
+                    if selected_move.is_possible_move(check_chess=False):
                         possible_moves.append(selected_move)
-                        ###print("possible move +1")
-        ###print("NB possible moves", len(possible_moves))
+
         return possible_moves
 
     def _select_move_from_score(self, moves, method="max"):
-        all_scores = {}
+        """Method to select a move according to the score on the board after the move.
+        Maximum or minimum score can be selected.
+
+        Parameters
+        ----------
+        moves : list
+            list of moves among which to chose the best one.
+        method: str in {"min", "max"}
+            Whether to select the move leading to minimum or maximum score
+
+        Returns
+        -------
+        move.Move
+            Selected move
+        float
+            Score corresponding to the selected move
+        """
+        # Compute scores
+        scores = {}
         for mv in moves:
-            mv_ = pickle.loads(pickle.dumps(mv, -1))
+            mv_ = mv.deepcopy()
+            # mv_ = pickle.loads(pickle.dumps(mv, -1))
             # mv_ = copy.deepcopy(mv)
             mv_.move_pieces()
             score = self._score_board(mv_.board)
-            all_scores[mv] = score
+            scores.append(score)
 
-        scores = list(all_scores.values())
+        # Selection os scores
         if method == "max":
             all_indexes = np.where(scores == np.max(scores))[0]
         elif method == "min":
             all_indexes = np.where(scores == np.min(scores))[0]
         else:
             raise ValueError("MIN OR MAX ALGO, selected %s" % method)
+        # If several moves lead to the same score, select randomly
+        if len(all_indexes) > 1:
+            perm = np.random.permutation(len(all_indexes))[0]
+            final_index = all_indexes[perm]
 
-        perm = np.random.permutation(len(all_indexes))[0]
-        final_index = all_indexes[perm]
-        return list(all_scores.keys())[int(final_index)], scores[final_index]
+        # Return
+        return moves[int(final_index)], scores[final_index]
 
     # def _def_get_best_score(self, moves, method="max"):
     #     all_scores = []
@@ -194,7 +260,6 @@ class EasyAIPlayer(Player):
 
             best_indexes = np.where(np.array(scores) == best_score)[0]
             final_index = best_indexes[np.random.permutation(len(best_indexes))[0]]
-            ###print(final_index)
             return possible_moves[int(final_index)], best_score
 
     def _score_move(self, move):
@@ -215,30 +280,58 @@ class EasyAIPlayer(Player):
         alpha=-10000,
         beta=10000,
         is_white=None,
+        draw_board=False,
     ):
+        """Method to reccursively look for the best move. Implements alpha-beta pruning to test most possible moves.
+
+        Parameters
+        ----------
+        init_board : engine.Board
+            Current state of the game as board
+        init_move: move.Move or None
+            Not sure yet
+        depth: int
+            How many turns to look into the future (also used for recursion).
+        alpha: int
+            Max score value for alpha pruning
+        beta: int
+            Max score value for beta pruning
+        is_white: None or bool
+            Can be used if we want to use the method for other color than self
+        draw_board: bool
+            Whether or not to draw the board in terminal
+
+        Returns
+        -------
+        int
+            score of "best" selected move
+        move
+            "best" selected move
+        """
+        # If want to use other color than self.
         if is_white is None:
             is_white = self.white_side
-        ###print('ALPHA BETA FOR BOARD:', "with depth", depth)
-        init_board.draw()
-        if depth == 0:
-            ###print("SCORING BOARD")
+
+        if draw_board:
             init_board.draw()
+
+        # End of recursion
+        if depth == 0:
+            # Score current board and return it
             score = self._score_board(init_board)
-            ###print("SCORE FOUND:", score)
             return score, init_move
         elif is_white == self.is_white_side():
+            # Get moves
             possible_moves = self._get_possible_moves(init_board, is_white=is_white)
-            ###print(depth, "nb moves:", len(possible_moves))
+            # Iterate over moves and keep the best one.
             best_score = -10000
             best_move = None
             i = 0
             for p_mv in possible_moves:
-                ###print("Move", i, "on", len(possible_moves), "for depth", depth, p_mv.end.x)
                 i += 1
-                # p_mv_ = pickle.loads(pickle.dumps(p_mv, -1))
-                # p_mv_ = copy.deepcopy(p_mv)
                 p_mv_ = p_mv.deepcopy()
                 p_mv_.move_pieces()
+                # Get best move if p_mv is actually made
                 score, _ = self._alpha_beta(
                     p_mv_.board,
                     init_move=p_mv_,
@@ -247,24 +340,24 @@ class EasyAIPlayer(Player):
                     beta=beta,
                     is_white=not is_white,
                 )
-                ###print(score, p_mv.start.x, p_mv.start.y, p_mv.end.x, p_mv.end.y)
-                best_move = [best_move, p_mv][np.argmax([best_score, score])]
-                best_score = np.max([best_score, score])
-                ###print("BEST SCORE", best_score)
-                ###print("BEST MOVE", best_move, best_move.start.x, best_move.start.y, best_move.end.x, best_move.end.y)
+                random_noise = np.random.randint(0, self.random_coeff)
+                best_move = [best_move, p_mv][
+                    np.argmax([best_score, score + random_noise])
+                ]
+                best_score = np.max([best_score, score + random_noise])
+
                 if best_score >= beta:
                     return best_score, best_move
                 alpha = np.max((alpha, best_score))
-            ###print("BBBBESTTT MOOVEEE", best_move, best_move.start.x, best_move.start.y, best_move.end.x, best_move.end.y, best_score)
+
             return best_score, best_move
 
         else:
             possible_moves = self._get_possible_moves(init_board, is_white=is_white)
-            ###print(depth, "nb moves:", len(possible_moves))
+
             best_score = 10000
             best_move = None
             for p_mv in possible_moves:
-                # p_mv_ = pickle.loads(pickle.dumps(p_mv, -1))
                 p_mv_ = p_mv.deepcopy()
                 p_mv_.move_pieces()
                 score, _ = self._alpha_beta(
@@ -275,16 +368,13 @@ class EasyAIPlayer(Player):
                     beta=beta,
                     is_white=is_white,
                 )
-                ###print(score, p_mv.start.x, p_mv.start.y, p_mv.end.x, p_mv.end.y)
+
                 best_move = [best_move, p_mv][np.argmin([best_score, score])]
                 best_score = np.min([best_score, score])
-                ###print("BEST SCORE", best_score)
-                ###print(np.argmax([best_score, score]))
-                ###print("BEST MOVE", best_move, best_move.start.x, best_move.start.y, best_move.end.x, best_move.end.y)
+
                 if best_score <= alpha:
                     return best_score, best_move
                 beta = np.min([beta, best_score])
-            ###print("BBBBESTTT MOOVEEE", best_move, best_move.start.x, best_move.start.y, best_move.end.x, best_move.end.y, best_score)
             return best_score, best_move
 
     def random_move(self, board):
@@ -319,34 +409,73 @@ class EasyAIPlayer(Player):
                             return selected_move
         ###print('No moved found, aborting...')
 
-    def time_to_play(self, board, depth=3):
-        board.draw()
-        current_score = self._score_board(board)
-        ###print("SCORE:", current_score)
+    def time_to_play(self, board, depth=3, draw_board=False):
+        """Method that must be called to ask AI player to move.
 
-        # all_possible_moves = self._get_possible_moves(board)
-        # sel_move, sel_score = self._select_move_from_score(all_possible_moves)
-        # sel_move, sel_score = self._search_tree(board, depth=3)
-        board.draw()
+        Parameters
+        ----------
+        board : engine.Board
+            board on which to play
+        depth: int
+            Tree best move search depth
+        draw_board: bool
+            Whether or not to draw the board in terminal
+
+        Returns
+        -------
+        move.Move
+            Best move according to board and parameters
+        """
+        if draw_board:
+            board.draw()
+        # current_score = self._score_board(board)
         sel_score, sel_move = self._alpha_beta(board, depth=depth)
-        board.draw()
-        ###print("future score:", sel_score)
-        ###print(sel_move.start.x, sel_move.start.y, sel_move.end.x, sel_move.end.y, self.color)
 
         return sel_move
 
     def _score_board(self, board):
+        """Method to score a board according to player policy.
+
+        Parameters
+        ----------
+        board : engine.Board
+            board to score
+
+        Returns
+        -------
+        float
+            Score corresponding to the board and the player's parameters
+        """
         score = 0
+        # Positive score for player pieces
         for piece_type in board.all_material[self.color]["alive"].keys():
             for piece in board.all_material[self.color]["alive"][piece_type]:
                 score += self.piece_weights[piece_type]
-                ###print(piece_type, piece.x, piece.y)
                 score += self.piece_positions_weights[piece_type][piece.x][piece.y]
+        own_king = board.all_material[self.color]["alive"]["king"]
+        if len(own_king) == 0:
+            score -= 1000
+        else:
+            own_king = own_king[0]
+            if board.get_cell(own_king.x, own_king.y).is_threatened(
+                board, own_king.is_white()
+            ):
+                score -= 1000
 
         adv_color = "white" if self.color == "black" else "black"
-
+        # Negative score for opponent pieces.
         for piece_type in board.all_material[adv_color]["alive"].keys():
             for piece in board.all_material[adv_color]["alive"][piece_type]:
                 score -= self.piece_weights[piece_type]
                 score -= self.piece_positions_weights[piece_type][piece.x][piece.y]
+        adv_king = board.all_material[adv_color]["alive"]["king"]
+
+        if len(adv_king) == 0:
+            score -= 1000
+        else:
+            adv_king = adv_king[0]
+            if board.get_cell(adv_king.x, adv_king.y).is_threatened(
+                board, adv_king.is_white()
+            ):
+                score += 1000
         return score

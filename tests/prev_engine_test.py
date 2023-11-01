@@ -1,14 +1,11 @@
 import sys
 
-sys.path.append("../python")
-sys.path.append("python")
+sys.path.append("pyalapin")
 
-import engine.engine as engine
-import importlib
-import engine.move as move
+import pyalapin.engine.engine as engine
+import pyalapin.engine.move as move
 import time
 
-importlib.reload(engine)
 import player.ai_player as ai_player
 
 

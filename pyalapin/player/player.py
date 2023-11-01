@@ -1,6 +1,6 @@
 import numpy as np
 
-from engine.move import Move
+from pyalapin.engine.move import Move
 
 
 class Player:

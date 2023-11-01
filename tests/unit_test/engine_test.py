@@ -1,9 +1,8 @@
 import sys
 
-sys.path.append("../../python")
-sys.path.append("python")
+sys.path.append("pyalapin")
 
-import engine.engine as engine
+import pyalapin.engine.engine as engine
 
 
 def test_blocked_moves():

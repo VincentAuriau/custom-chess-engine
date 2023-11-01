@@ -1,10 +1,9 @@
 import sys
 
-sys.path.append("../../python")
-sys.path.append("python")
+sys.path.append("pyalapin")
 
-import engine.engine as engine
-import engine.material as material
+import pyalapin.engine.engine as engine
+import pyalapin.engine.material as material
 
 # Add verifications about own color of piece on end cell
 #

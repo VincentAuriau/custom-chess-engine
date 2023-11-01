@@ -7,11 +7,11 @@
 
 import copy
 
-from engine.move import Move
-from player.player import Player, AIRandomPlayer
-from player.ai_player import EasyAIPlayer
-from player.my_player import MyPlayer
-import engine.material as material
+from pyalapin.engine.move import Move
+from pyalapin.player.player import Player, AIRandomPlayer
+from pyalapin.player.ai_player import EasyAIPlayer
+from pyalapin.player.my_player import MyPlayer
+import pyalapin.engine.material as material
 
 
 class Color:
@@ -292,7 +292,6 @@ class Cell:
                         return True
 
                 elif piece_to_check is None:
-                    print("def")
                     keep_going = True
                     x_to_check += i
                     y_to_check += j
@@ -414,10 +413,9 @@ class Board:
             True if you want to start from an existing board.
         """
         if not empty_init:
-            self.board = None
             self.white_king, self.black_king, self.all_material = self._reset_board()
 
-    def deepcopy(self, memodict={}):
+    def deepcopy(self, light=True):
         """Method to create an uncorrelated clone of the board.
 
         Returns
@@ -428,12 +426,21 @@ class Board:
         copied_object = Board(empty_init=True)
         board = [[Cell(i, j, None) for j in range(8)] for i in range(8)]
         copied_object.board = board
-        copied_material = self.deep_copy_material()
-        white_king = copied_material["white"]["alive"]["king"][0]
-        black_king = copied_material["black"]["alive"]["king"][0]
+        if light:
+            copied_material = self.light_deep_copy_material()
+        else:
+            copied_material = self.deep_copy_material()
+
+        assert (
+            len(copied_material["black"]["alive"]["king"]) > 0
+        ), "Black king is dead ?"
+        assert (
+            len(copied_material["white"]["alive"]["king"]) > 0
+        ), "White king is dead ?"
+        copied_object.white_king = copied_material["white"]["alive"]["king"][0]
+        copied_object.black_king = copied_material["black"]["alive"]["king"][0]
         copied_object.all_material = copied_material
-        copied_object.white_king = white_king
-        copied_object.black_king = black_king
+
         for piece_list in copied_material["white"]["alive"].values():
             for piece in piece_list:
                 copied_object.get_cell(piece.x, piece.y).set_piece(piece)
@@ -442,6 +449,63 @@ class Board:
                 copied_object.get_cell(piece.x, piece.y).set_piece(piece)
 
         return copied_object
+
+    def light_deep_copy_material(self):
+        """Method to create an uncorrelated clone of all the pieces on the board. Light version
+        where only alive pieces are returned.
+
+        Returns
+        -------
+        dict of Pieces
+            Exact copy of self.all_material.
+        """
+        material = {
+            "white": {
+                "alive": {
+                    "pawn": [],
+                    "knight": [],
+                    "bishop": [],
+                    "rook": [],
+                    "queen": [],
+                    "king": [],
+                },
+                "killed": {
+                    "pawn": [],
+                    "knight": [],
+                    "bishop": [],
+                    "rook": [],
+                    "queen": [],
+                    "king": [],
+                },
+            },
+            "black": {
+                "alive": {
+                    "pawn": [],
+                    "knight": [],
+                    "bishop": [],
+                    "rook": [],
+                    "queen": [],
+                    "king": [],
+                },
+                "killed": {
+                    "pawn": [],
+                    "knight": [],
+                    "bishop": [],
+                    "rook": [],
+                    "queen": [],
+                    "king": [],
+                },
+            },
+        }
+
+        for color in ["white", "black"]:
+            for status in ["alive"]:
+                for piece_type in ["pawn", "knight", "bishop", "rook", "queen", "king"]:
+                    for piece in self.all_material[color][status][piece_type]:
+                        material[color][status][piece_type].append(
+                            piece.piece_deepcopy()
+                        )
+        return material
 
     def deep_copy_material(self):
         """Method to create an uncorrelated clone of all the pieces on the board, killed and not killed.
@@ -499,7 +563,7 @@ class Board:
                         )
         return material
 
-    def __deepcopy__(self, memodict={}):
+    def _deepcopy__(self, memodict={}):
         """Method to create an uncorrelated clone of the board.
 
         Returns
@@ -904,7 +968,7 @@ class Game:
 
     game_status = []
 
-    def __init__(self, automatic_draw=True, ai=False):
+    def __init__(self, player1=None, player2=None, automatic_draw=True, ai=False):
         """Initialization of the cell.
 
         Parameters
@@ -914,14 +978,30 @@ class Game:
         ai : bool
             Whether or not to play with AI. Is set to True, AI will play black pieces.
         """
-        self.player1 = Player(True)
-        self.ai = ai
-        if ai:
-            # self.player2 = AIRandomPlayer(False)
-            self.player2 = EasyAIPlayer(False)
-            # self.player2 = MyPlayer(white_side=False, path_to_model="./test1")
+
+        # If ai = True and both players are None, AI plays by default black pieces
+        if player2 is None:
+            if ai:
+                self.player2 = EasyAIPlayer(False)
+            else:
+                self.player2 = Player(False)
+
+            if player1 is None:
+                self.player1 = Player(True)
+            else:
+                self.player1 = player1
+
+        elif player1 is None:
+            if ai:
+                self.player1 = EasyAIPlayer(True)
+            else:
+                self.player1 = Player(True)
+            self.player2 = player2
         else:
-            self.player2 = Player(False)
+            self.player1 = player1
+            self.player2 = player2
+
+        self.ai = ai
         self.to_play_player = self.player1
 
         self.board = Board()

@@ -1,6 +1,6 @@
 from abc import abstractmethod
 
-from engine.color import Color
+from pyalapin.engine.color import Color
 
 
 class Piece(object):
@@ -157,6 +157,24 @@ class Piece(object):
             List of authorized moves
         """
         return None
+
+    @abstractmethod
+    def get_threatened_cells_on_board(self, board):
+        """
+        Method to list which cells are threatened by the piece (authorized movement + conditioned on other pieces on board).
+
+        Parameters
+        ----------
+        board: Board
+            game board self belong to
+
+        Returns
+        -------
+        list
+            List of threatened cells
+
+        """
+        return []
 
     @abstractmethod
     def get_str(self):
@@ -371,13 +389,14 @@ class Pawn(Piece):
         possible_moves = []
         if self.is_white():
             # Front cell
-            possible_moves.append((x + 1, y))
+            if x < 7:
+                possible_moves.append((x + 1, y))
 
-            # Diagonal cells
-            if y - 1 >= 0:
-                possible_moves.append((x + 1, y - 1))
-            if y + 1 <= 7:
-                possible_moves.append((x + 1, y + 1))
+                # Diagonal cells
+                if y - 1 >= 0:
+                    possible_moves.append((x + 1, y - 1))
+                if y + 1 <= 7:
+                    possible_moves.append((x + 1, y + 1))
 
             # Double front cell
             if x == 1:
@@ -385,16 +404,53 @@ class Pawn(Piece):
 
         # Symmetric for black pawns
         else:
-            possible_moves.append((x - 1, y))
+            if x > 0:
+                possible_moves.append((x - 1, y))
 
-            if y - 1 >= 0:
-                possible_moves.append((x - 1, y - 1))
-            if y + 1 <= 7:
-                possible_moves.append((x - 1, y + 1))
+                if y - 1 >= 0:
+                    possible_moves.append((x - 1, y - 1))
+                if y + 1 <= 7:
+                    possible_moves.append((x - 1, y + 1))
             if x == 6:
                 possible_moves.append((x - 2, y))
 
         return possible_moves
+
+    @abstractmethod
+    def get_threatened_cells_on_board(self, board):
+        """
+        Method to list which cells are threatened by the piece (authorized movement + conditioned on other pieces on board).
+
+        Parameters
+        ----------
+        board: Board
+            game board self belong to
+
+        Returns
+        -------
+        list
+            List of threatened cells
+
+        """
+
+        cells_threatened = []
+        if self.is_white():
+            if x < 7:
+                # Diagonal cells
+                if y - 1 >= 0:
+                    cells_threatened.append((x + 1, y - 1))
+                if y + 1 <= 7:
+                    cells_threatened.append((x + 1, y + 1))
+
+        # Symmetric for black pawns
+        else:
+            if x > 0:
+                if y - 1 >= 0:
+                    cells_threatened.append((x - 1, y - 1))
+                if y + 1 <= 7:
+                    cells_threatened.append((x - 1, y + 1))
+
+        return cells_threatened
 
     def promote(self, promote_into="Queen"):
         """Method to promote a pawn to other material type. Only happens if the pawn reaches the other side of the board.
