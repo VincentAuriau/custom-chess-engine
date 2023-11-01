@@ -1295,4 +1295,4 @@ class Game:
             pgn += self.history[i]
             pgn += " "
 
-        return pgn
+        return pgn[:-1]
