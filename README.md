@@ -29,9 +29,11 @@ sys.path.append("python/")
 import python.engine as engine
 
 game = engine.engine.Game(
-    automatic_draw=True, # Set to True if you want to have each turn drawn in terminal
+    automatic_draw=True, # Set to True if you want
+                         # to have each turn drawn in terminal
     ai=False, # set to True if you want to play agains AI
-    save_pgn=False # set to True if you want to save moves as PGN
+    save_pgn=False # set to True if you want to
+                   # save moves as PGN
 )
 game.move_from_coordinates(game.player1, 1, 4, 3, 4)
 game.move_from_coordinates(game.player2, 6, 4, 4, 4)
