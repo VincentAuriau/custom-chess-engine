@@ -28,3 +28,7 @@ game = engine.engine.Game()
 game.move_from_coordinates(game.player1, 1, 4, 3, 4)
 game.move_from_coordinates(game.player2, 6, 0, 5, 0)
 ```
+
+![](docs/scholars_mate_command.gif)
+
+There are colors in the command line not showing here in the GIF, though...
