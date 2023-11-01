@@ -302,6 +302,8 @@ class TableScreen(GridLayout):
                 # If AI is playing, then trigger its next move with time_to_play method.
                 if self.ai_playing:
                     print("Time for AI")
+
+                    # Resets background colors of player
                     ai_move = self.game.player2.time_to_play(self.game.board)
                     self.game.board.draw()
                     game_is_on = self.game.move(ai_move, self.game.player2)
@@ -309,8 +311,23 @@ class TableScreen(GridLayout):
                     # Verify game is still going on
                     # Actually we consider that an AI cannot trigger an impossible move here
                     # Maybe should be modified ?
+
                     if game_is_on[0]:
                         self.update()
+                        (
+                            self.cells[ai_move.start.x][ai_move.start.y].background_normal,
+                            self.cells[ai_move.start.x][ai_move.start.y].background_down,
+                        ) = (
+                            self.cells[ai_move.start.x][ai_move.start.y].background_down,
+                            self.cells[ai_move.start.x][ai_move.start.y].background_normal,
+                        )
+                        (
+                            self.cells[ai_move.end.x][ai_move.end.y].background_normal,
+                            self.cells[ai_move.end.x][ai_move.end.y].background_down,
+                        ) = (
+                            self.cells[ai_move.end.x][ai_move.end.y].background_down,
+                            self.cells[ai_move.end.x][ai_move.end.y].background_normal,
+                        )
                     else:
                         if isinstance(game_is_on[1], str):
                             self.finish_game(game_is_on[1])
@@ -337,23 +354,26 @@ class TableScreen(GridLayout):
                 )
                 popup.open()
 
-            # Resets values befor next move
-            row, col = self.first_cell_clicked
-            (
-                self.cells[row][col].background_normal,
-                self.cells[row][col].background_down,
-            ) = (
-                self.cells[row][event.column].background_down,
-                self.cells[event.row][col].background_normal,
-            )
+            if not self.ai_playing:
+                # Resets values befor next move
+                # If AI is playing, it is handled with self.update()
+                row, col = self.first_cell_clicked
+                (
+                    self.cells[row][col].background_normal,
+                    self.cells[row][col].background_down,
+                ) = (
+                    self.cells[row][col].background_down,
+                    self.cells[row][col].background_normal,
+                )
+                (
+                    self.cells[event.row][event.column].background_normal,
+                    self.cells[event.row][event.column].background_down,
+                ) = (
+                    self.cells[event.row][event.column].background_down,
+                    self.cells[event.row][event.column].background_normal,
+                )
+
             self.first_cell_clicked = None
-            (
-                self.cells[event.row][event.column].background_normal,
-                self.cells[event.row][event.column].background_down,
-            ) = (
-                self.cells[event.row][event.column].background_down,
-                self.cells[event.row][event.column].background_normal,
-            )
 
 
 class MyApp(App):
