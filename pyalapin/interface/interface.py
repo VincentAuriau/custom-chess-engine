@@ -374,6 +374,8 @@ class TableScreen(GridLayout):
                 )
 
             self.first_cell_clicked = None
+            if not validated_move:
+                self.update()
 
 
 class MyApp(App):

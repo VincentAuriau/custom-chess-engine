@@ -430,6 +430,9 @@ class Board:
             copied_material = self.light_deep_copy_material()
         else:
             copied_material = self.deep_copy_material()
+
+        assert len(copied_material["black"]["alive"]["king"]) > 0, "Black king is dead ?"
+        assert len(copied_material["white"]["alive"]["king"]) > 0, "White king is dead ?"
         copied_object.white_king = copied_material["white"]["alive"]["king"][0]
         copied_object.black_king = copied_material["black"]["alive"]["king"][0]
         copied_object.all_material = copied_material
