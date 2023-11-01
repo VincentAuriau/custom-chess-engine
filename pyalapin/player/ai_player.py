@@ -340,10 +340,11 @@ class EasyAIPlayer(Player):
                     beta=beta,
                     is_white=not is_white,
                 )
-                random_noise = np.random.randint(0, self.random_coeff)
-                best_move = [best_move, p_mv][
-                    np.argmax([best_score, score + random_noise])
-                ]
+                if self.random_coeff > 0:
+                    random_noise = np.random.randint(0, self.random_coeff)
+                else:
+                    random_noise = 0
+                best_move = [best_move, p_mv][np.argmax([best_score, score + random_noise])]
                 best_score = np.max([best_score, score + random_noise])
 
                 if best_score >= beta:

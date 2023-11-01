@@ -142,6 +142,12 @@ def test_end_game():
     print(keep_going, status)
 
 
-if __name__ == "__main__":
-    test_en_passant()
-    test_end_game()
+def test_pgn():
+    """Tests the pgn history of the game."""
+    game = engine.Game(automatic_draw=False, save_pgn=True)
+    game.move_from_coordinates(game.player1, 1, 4, 3, 4)
+    game.move_from_coordinates(game.player2, 6, 5, 4, 5)
+    game.move_from_coordinates(game.player1, 0, 3, 4, 7)
+    game.move_from_coordinates(game.player2, 6, 6, 5, 6)
+    print(game.to_pgn())
+    assert game.to_pgn() == "1. e2e4 f7f5 2. Qd1h5+ g7g6"

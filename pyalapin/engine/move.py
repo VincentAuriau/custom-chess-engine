@@ -106,6 +106,42 @@ class Move:
             else:
                 self.moved_piece.last_move_is_double = False
 
+    def to_pgn(self):
+        """
+        Method to return the PGN representation of the move.
+
+        Returns
+        -------
+        str:
+            pgn representation of the move
+        """
+        rows = ["a", "b", "c", "d", "e", "f", "g", "h"]
+        start = f"{rows[self.start.y]}{self.start.x + 1}"
+        end = f"{rows[self.end.y]}{self.end.x + 1}"
+        piece = self.moved_piece.get_str().replace(" ", "")
+        if isinstance(self.moved_piece, material.Pawn):
+            piece = ""
+        if self.killed_piece is not None:
+            start += "x"
+        elif self.is_castling:
+            if (self.moved_piece.is_white() and self.end.y == 1) or (
+                not self.moved_piece.is_white() and self.end.y == 6
+            ):
+                piece = "O-O-O"
+                start = ""
+                end = ""
+        king = (
+            self.board.white_king
+            if not self.player.white_side
+            else self.board.black_king
+        )
+        if self.board.get_cell(king.x, king.y).is_threatened(
+            board=self.board, threaten_color=not self.player.white_side
+        ):
+            end += "+"
+        print(f"{piece}{start}{end}")
+        return f"{piece}{start}{end}"
+
     def _set_castling_done(self):
         """
         If self is a castling move, then when it is done this function sets the castling_done attribute
@@ -140,7 +176,7 @@ class Move:
             return False
 
         else:
-            if self.end.y == 6:  # Castling in the right
+            if self.end.y == 6:  # Castling on the right
                 rook_to_move = self.board.get_cell(self.start.x, 7).get_piece()
                 if not isinstance(rook_to_move, material.Rook):
                     return False
