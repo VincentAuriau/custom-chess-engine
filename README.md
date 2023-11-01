@@ -15,7 +15,7 @@ if __name__ == '__main__':
 
 ```
 
-![](interface_example.PNG)
+![](docs/scholars_mate_interface.gif)
 
 ## How to play with Python commands
 
