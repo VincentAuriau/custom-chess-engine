@@ -1,6 +1,5 @@
 import numpy as np
 import os
-import time
 
 from kivy.app import App
 from kivy.uix.gridlayout import GridLayout
@@ -12,7 +11,7 @@ from kivy.uix.popup import Popup
 
 from kivy.graphics import Rectangle, Color, Canvas
 
-from pyalapin.engine.engine import Game
+from pyalapin.engine.engine import ChessGame
 
 
 class LoginScreen(GridLayout):
@@ -56,7 +55,7 @@ class DisplayableCell(Button):
         self.column = column
 
 
-class TableScreen(GridLayout):
+class BoardInterface(GridLayout):
     """
     Main class to represent and display the board, as well as to play a chess game.
 
@@ -64,7 +63,7 @@ class TableScreen(GridLayout):
     ----------
     path_to_illustrations: str
         Path to the images to use to display cells & pieces
-    game: engine.Game
+    game: engine.ChessGame
         game to actually represent
     ai_playing: bool
         whether or not an AI is playing (only one of the players for now)
@@ -89,7 +88,7 @@ class TableScreen(GridLayout):
         game: engine.Game to represent
 
         """
-        super(TableScreen, self).__init__(**kwargs)
+        super(BoardInterface, self).__init__(**kwargs)
         self.path_to_illustrations = "illustrations"
         self.game = game
 
@@ -386,7 +385,7 @@ class TableScreen(GridLayout):
                 self.update()
 
 
-class MyApp(App):
+class ChessApp(App):
     """
     Main app to use to play game, by calling MyApp().buil() and then player.
     """
@@ -402,6 +401,6 @@ class MyApp(App):
         """
         Builds the game and the display board along with it.
         """
-        game = Game(automatic_draw=False, ai=self.play_with_ai)
+        game = ChessGame(automatic_draw=False, ai=self.play_with_ai)
         print("game created")
-        return TableScreen(game)
+        return BoardInterface(game)

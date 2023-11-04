@@ -4,7 +4,7 @@ import pickle
 import pyalapin.engine.material as material
 
 
-class Move:
+class Move(object):
     """Base class for material movement.
 
     Implements various checks and is able to operate a piece movement along additional actions such as taking an

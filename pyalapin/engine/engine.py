@@ -14,13 +14,13 @@ from pyalapin.player.my_player import MyPlayer
 import pyalapin.engine.material as material
 
 
-class Color:
+class Color(object):
     GREEN = "\x1b[32m"
     WHITE = "\033[0m"
     RED = "\x1b[31m"
 
 
-class Cell:
+class Cell(object):
     """
     Cell class representing a base element of a board.
 
@@ -387,7 +387,7 @@ class Cell:
         return False
 
 
-class Board:
+class Board(object):
     """
     Board class representing the chess board.
 
@@ -941,7 +941,7 @@ class Board:
         return whole_text
 
 
-class Game:
+class ChessGame(object):
     """
     Game class, used to play a chess game, interact with the board and move pieces.
 

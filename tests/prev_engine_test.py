@@ -1,16 +1,12 @@
-import sys
-
-sys.path.append("pyalapin")
-
 import pyalapin.engine.engine as engine
 import pyalapin.engine.move as move
 import time
 
-import player.ai_player as ai_player
+import pyalapin.player.ai_player as ai_player
 
 
 def test_working_castling():
-    game = engine.Game()
+    game = engine.ChessGame()
     game.move_from_coordinates(game.player1, 1, 4, 3, 4)
     print("///", game.board.all_material["black"]["alive"]["king"][0].has_moved)
     game.move_from_coordinates(game.player2, 6, 4, 4, 4)
@@ -45,7 +41,7 @@ def test_working_castling():
 
 
 def test_failing_castling():
-    game = engine.Game()
+    game = engine.ChessGame()
     game.move_from_coordinates(game.player1, 1, 4, 3, 4)
     game.move_from_coordinates(game.player2, 6, 4, 4, 4)
     game.move_from_coordinates(game.player1, 0, 5, 3, 2)
@@ -64,13 +60,13 @@ def test_failing_castling():
 
 
 def test_blocked_moves():
-    game = engine.Game()
+    game = engine.ChessGame()
     game.move_from_coordinates(game.player1, 1, 4, 3, 4)
     game.move_from_coordinates(game.player2, 7, 0, 5, 0)
 
 
 def test_en_passant():
-    game = engine.Game()
+    game = engine.ChessGame()
     game.move_from_coordinates(game.player1, 1, 4, 3, 4)
     game.move_from_coordinates(game.player2, 6, 0, 5, 0)
     game.move_from_coordinates(game.player1, 3, 4, 4, 4)
@@ -79,7 +75,7 @@ def test_en_passant():
 
 
 def test_end_game():
-    game = engine.Game()
+    game = engine.ChessGame()
     game.move_from_coordinates(game.player1, 1, 4, 3, 4)
     game.move_from_coordinates(game.player2, 6, 5, 4, 5)
     game.move_from_coordinates(game.player1, 0, 3, 4, 7)
@@ -88,7 +84,7 @@ def test_end_game():
 
 
 def test_pawn_transformation():
-    game = engine.Game()
+    game = engine.ChessGame()
     game.move_from_coordinates(game.player1, 1, 4, 3, 4)
     game.move_from_coordinates(game.player2, 6, 5, 4, 5)
     game.move_from_coordinates(game.player1, 0, 3, 4, 7)
@@ -102,7 +98,7 @@ def test_pawn_transformation():
 
 
 def check_unchecking():
-    game = engine.Game()
+    game = engine.ChessGame()
     game.move_from_coordinates(game.player1, 1, 4, 3, 4)
     game.move_from_coordinates(game.player2, 6, 5, 4, 5)
     game.move_from_coordinates(game.player1, 0, 3, 4, 7)
@@ -110,7 +106,7 @@ def check_unchecking():
 
 
 def test_blocked_double_pawn():
-    game = engine.Game()
+    game = engine.ChessGame()
     game.move_from_coordinates(game.player1, 1, 4, 3, 4)
     game.move_from_coordinates(game.player2, 6, 5, 4, 5)
     game.move_from_coordinates(game.player1, 3, 4, 4, 4)
@@ -120,7 +116,7 @@ def test_blocked_double_pawn():
 
 
 def test_king_taking_queen():
-    game = engine.Game()
+    game = engine.ChessGame()
     game.move_from_coordinates(game.player1, 1, 4, 3, 4)
     game.move_from_coordinates(game.player2, 6, 0, 5, 0)
     game.move_from_coordinates(game.player1, 0, 3, 4, 7)
@@ -136,7 +132,7 @@ def test_king_taking_queen():
 
 
 def specific_test():
-    game = engine.Game()
+    game = engine.ChessGame()
     game.move_from_coordinates(game.player1, 1, 4, 3, 4)
     game.move_from_coordinates(game.player2, 6, 5, 5, 5)
     game.move_from_coordinates(game.player1, 0, 3, 4, 7)
@@ -160,7 +156,7 @@ def specific_test():
 
 
 def possible_moves():
-    game = engine.Game()
+    game = engine.ChessGame()
     game.move_from_coordinates(game.player1, 1, 4, 3, 4)
     game.move_from_coordinates(game.player2, 7, 1, 5, 2)
     game.move_from_coordinates(game.player1, 3, 4, 4, 4)
@@ -188,12 +184,12 @@ def possible_moves():
 
 def test_player():
     player = ai_player.EasyAIPlayer(False)
-    game = engine.Game()
+    game = engine.ChessGame()
     game.move_from_coordinates(game.player1, 1, 4, 3, 4)
     game.move_from_coordinates(game.player2, 6, 4, 4, 4)
     score = player._score_board(game.board)
     print("score", score)
-    game = engine.Game()
+    game = engine.ChessGame()
     game.move_from_coordinates(game.player1, 1, 4, 3, 4)
     game.move_from_coordinates(game.player2, 6, 4, 5, 4)
     score = player._score_board(game.board)

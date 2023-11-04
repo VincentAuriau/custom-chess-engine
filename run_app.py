@@ -1,4 +1,6 @@
-from pyalapin.interface.interface import MyApp
+from pyalapin.interface import ChessApp
+
+# import pyalapin.interface as interface
 
 if __name__ == "__main__":
-    MyApp(play_with_ai=False).run()
+    ChessApp(play_with_ai=False).run()

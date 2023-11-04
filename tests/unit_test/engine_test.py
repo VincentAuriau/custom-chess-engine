@@ -9,7 +9,7 @@ def test_blocked_moves():
     """
     Test that a blocked move cannot happen.
     """
-    game = engine.Game(automatic_draw=False)
+    game = engine.ChessGame(automatic_draw=False)
     game.move_from_coordinates(game.player1, 1, 4, 3, 4)
     _, winner = game.move_from_coordinates(game.player2, 7, 0, 5, 0)
     assert winner == 0
@@ -19,7 +19,7 @@ def test_promotion_to_rook():
     """
     Test that the promotion works well
     """
-    game = engine.Game(automatic_draw=False)
+    game = engine.ChessGame(automatic_draw=False)
     game.move_from_coordinates(game.player1, 1, 4, 3, 4)
     game.move_from_coordinates(game.player2, 6, 5, 4, 5)
     game.move_from_coordinates(game.player1, 3, 4, 4, 5)
@@ -40,7 +40,7 @@ def test_default_promotion():
     """
     Test that the promotion works well
     """
-    game = engine.Game(automatic_draw=False)
+    game = engine.ChessGame(automatic_draw=False)
     game.move_from_coordinates(game.player1, 1, 4, 3, 4)
     game.move_from_coordinates(game.player2, 6, 5, 4, 5)
     game.move_from_coordinates(game.player1, 3, 4, 4, 5)
@@ -57,7 +57,7 @@ def test_default_promotion():
 
 def test_working_castling():
     """Tests that small and big castling work."""
-    game = engine.Game(automatic_draw=False)
+    game = engine.ChessGame(automatic_draw=False)
     game.move_from_coordinates(game.player1, 1, 4, 3, 4)
     game.move_from_coordinates(game.player2, 6, 4, 4, 4)
     game.move_from_coordinates(game.player1, 0, 5, 3, 2)
@@ -83,7 +83,7 @@ def test_working_castling():
 
 def test_failing_castling():
     """Tests conditions where castling cannot be done."""
-    game = engine.Game(automatic_draw=False)
+    game = engine.ChessGame(automatic_draw=False)
     game.move_from_coordinates(game.player1, 1, 4, 3, 4)
     game.move_from_coordinates(game.player2, 6, 4, 4, 4)
     game.move_from_coordinates(game.player1, 0, 5, 3, 2)
@@ -108,7 +108,7 @@ def test_failing_castling():
 
 def test_en_passant():
     """Tests that prise en passant can be done."""
-    game = engine.Game(automatic_draw=False)
+    game = engine.ChessGame(automatic_draw=False)
     game.move_from_coordinates(game.player1, 1, 4, 3, 4)
     game.move_from_coordinates(game.player2, 6, 0, 5, 0)
     game.move_from_coordinates(game.player1, 3, 4, 4, 4)
@@ -121,7 +121,7 @@ def test_en_passant():
 
 def test_blocked_by_mat():
     """Tests that if the king is checked cannot move unless it unchecks the king."""
-    game = engine.Game(automatic_draw=False)
+    game = engine.ChessGame(automatic_draw=False)
     game.move_from_coordinates(game.player1, 1, 4, 3, 4)
     game.move_from_coordinates(game.player2, 6, 5, 4, 5)
     game.move_from_coordinates(game.player1, 0, 3, 4, 7)
@@ -131,7 +131,7 @@ def test_blocked_by_mat():
 
 def test_end_game():
     """Tests what happens when check & mat happens."""
-    game = engine.Game(automatic_draw=False)
+    game = engine.ChessGame(automatic_draw=False)
     game.move_from_coordinates(game.player1, 1, 4, 3, 4)
     game.move_from_coordinates(game.player2, 6, 5, 4, 5)
     game.move_from_coordinates(game.player1, 0, 3, 4, 7)
@@ -144,7 +144,7 @@ def test_end_game():
 
 def test_pgn():
     """Tests the pgn history of the game."""
-    game = engine.Game(automatic_draw=False, save_pgn=True)
+    game = engine.ChessGame(automatic_draw=False, save_pgn=True)
     game.move_from_coordinates(game.player1, 1, 4, 3, 4)
     game.move_from_coordinates(game.player2, 6, 5, 4, 5)
     game.move_from_coordinates(game.player1, 0, 3, 4, 7)
