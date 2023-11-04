@@ -2,7 +2,7 @@ import pyalapin.engine.engine as engine
 import pyalapin.engine.move as move
 import time
 
-import player.ai_player as ai_player
+import pyalapin.player.ai_player as ai_player
 
 
 def test_working_castling():
