@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "pyalapin"
 version = "0.0.1"
 authors = [
-  { name = "Vincent Auriau", email = ""},
+  { name = "Vincent Auriau", email = "vincent.auriau.dev@gmail.com"},
 ]
 license = { file = "LICENSE" }
 readme = "README.md"
