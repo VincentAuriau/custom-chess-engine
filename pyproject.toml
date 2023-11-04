@@ -1,15 +1,27 @@
-requires = ["setuptools"]
+[build-system]
+requires = ["setuptools>=61.0.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "pyalapin"
 version = "0.0.1"
 authors = [
-  { name = "Vincent Auriau"},
+  { name = "Vincent Auriau", email = ""},
 ]
-description = "Custom Chess Engine"
+license = { file = "LICENSE" }
 readme = "README.md"
+
+description = "Custom chess engine built specifically to develop AIs"
+keywords = ["chess", "ai", "interface"]
+dependencies = [
+    "numpy"
+]
 requires-python = ">=3.8"
+[project.optional-dependencies]
+dev = ["black", "bumpver", "isort", "pip-tools", "pytest", "kivy"]
+
+[project.urls]
+Homepage = "https://github.com/VincentAuriau/custom-chess-engine"
 
 [tool.setuptools]
 packages = [
