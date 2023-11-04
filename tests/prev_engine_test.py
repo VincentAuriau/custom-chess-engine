@@ -189,7 +189,7 @@ def test_player():
     game.move_from_coordinates(game.player2, 6, 4, 4, 4)
     score = player._score_board(game.board)
     print("score", score)
-    game = engine.Game()
+    game = engine.ChessGame()
     game.move_from_coordinates(game.player1, 1, 4, 3, 4)
     game.move_from_coordinates(game.player2, 6, 4, 5, 4)
     score = player._score_board(game.board)
