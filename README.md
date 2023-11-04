@@ -8,10 +8,10 @@ Special thanks and dedication to LeMerluche, crushing its opponents on chess.com
 
 ## How to play with interface
 ```python
-from pyalapin.interface.interface import MyApp
+from pyalapin.interface import ChessApp
 
 if __name__ == '__main__':
-    MyApp(
+    ChessApp(
         play_with_ai=False # Set to True if you want to play agains AI
     ).run()
 
@@ -24,11 +24,9 @@ if __name__ == '__main__':
 <img align="right" src="docs/scholars_mate_command.gif">
 
 ```python
-import sys
-sys.path.append("python/")
-import python.engine as engine
+from pyalapin.engine import ChessGame
 
-game = engine.engine.Game(
+game = ChessGame(
     automatic_draw=True, # Set to True if you want
                          # to have each turn drawn in terminal
     ai=False, # set to True if you want to play agains AI
