@@ -1,4 +1,5 @@
 from pyalapin.interface import ChessApp
+
 # import pyalapin.interface as interface
 
 if __name__ == "__main__":
