@@ -10,6 +10,13 @@ authors = [
 ]
 license = { file = "LICENSE" }
 readme = "README.md"
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Topic :: Games/Entertainment :: Board Games",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
 
 description = "Custom chess engine built specifically to develop AIs"
 keywords = ["chess", "ai", "interface"]
