@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pyalapin"
-version = "0.0.1"
+version = "0.0.2"
 authors = [
   { name = "Vincent Auriau", email = "vincent.auriau.dev@gmail.com"},
 ]
@@ -30,8 +30,6 @@ dev = ["black", "bumpver", "isort", "pip-tools", "pytest", "kivy"]
 [project.urls]
 Homepage = "https://github.com/VincentAuriau/custom-chess-engine"
 
-[tool.setuptools]
-packages = [
-  "tests",
-  "pyalapin"
-]
+[tool.setuptools.packages.find]
+include=["pyalapin*"]
+namespaces=false
