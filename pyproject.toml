@@ -25,7 +25,7 @@ dependencies = [
 ]
 requires-python = ">=3.8"
 [project.optional-dependencies]
-dev = ["black", "bumpver", "isort", "pip-tools", "pytest", "kivy"]
+dev = ["black", "bumpver", "isort", "pip-tools", "pytest", "kivy", "stockfish"]
 
 [project.urls]
 Homepage = "https://github.com/VincentAuriau/custom-chess-engine"
