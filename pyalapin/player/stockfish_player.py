@@ -9,21 +9,30 @@ class StockfishPlayer(Player):
     A first AI that plays totally randomly. Selects one move among all possibles and plays it.
     """
 
-    def __init__(self, path_to_dirsave, elo=1000, **kwargs):
+    def __init__(self, path_to_dirsave, elo=1000, depth=18, threads=1, hash_pow=4, **kwargs):
         super().__init__(**kwargs)
         self.elo = elo
         self.path_to_dirsave = path_to_dirsave
-        self.stockfish = Stockfish()
+        self.depth = depth
+        self.threads = threads
+        self.hash = 2**hash_pow
+
+        params = {
+        "Threads": self.threads,
+        "Hash": self.hash,
+        "UCI_Elo": self.elo,
+        }
+        self.stockfish = Stockfish(path=self.path_to_dirsave, depth=self.depth, parameters=params)
 
         self.letter_to_coordinate = {
-        "a": 0,
-        "b": 1,
-        "c": 2,
-        "d": 3,
-        "e": 4,
-        "f": 5,
-        "g": 6,
-        "h": 7,
+        "a": 7,
+        "b": 6,
+        "c": 5,
+        "d": 4,
+        "e": 3,
+        "f": 2,
+        "g": 1,
+        "h": 0,
         }
 
     def __str__(self):
@@ -40,6 +49,20 @@ class StockfishPlayer(Player):
     def quit(self):
         self.stockfish.send_quit_command()
 
+    def _sf_to_own_coordinates(self, coordinates):
+        return  (int(coordinates[1])-1, self.letter_to_coordinate[coordinates[0]])
+
+
+    def get_move_from_fen(self, fen):
+        self.stockfish.set_fen_position(fen)
+        stockfish_move = self.stockfish.get_best_move()
+        print(f"StockFish best move: {stockfish_move}")
+        start_cell_coordinates = self._sf_to_own_coordinates(stockfish_move[:2])
+        end_cell_coordinates = self._sf_to_own_coordinates(stockfish_move[2:])
+
+        print("Transformed Coordinates", start_cell_coordinates, end_cell_coordinates)
+        return start_cell_coordinates, end_cell_coordinates
+
     def time_to_play(self, board):
         """Potential method that returns a move.
 
@@ -54,16 +77,5 @@ class StockfishPlayer(Player):
         """
 
         fen_repr = board.to_fen()
-        self.stockfish.set_fen_position(fen_repr)
-        stockfish_move = self.stockfish.get_best_move()
-
-        print(stockfish_move)
-
-        start_cell_coordinates = (self.letter_to_coordinate[stockfish_move[0]], 
-            int(stockfish_move[1])-1)
-        end_cell_coordinates = (self.letter_to_coordinate[stockfish_move[2]], 
-            int(stockfish_move[3])-1)
-
-        move = Move(self, board, board.get_cell(*start_cell_coordinates), board.get_cell(*end_cell_coordinates))
-        return move
+        return self.get_move_from_fen(fen_repr)
         
