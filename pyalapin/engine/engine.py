@@ -1248,6 +1248,7 @@ class ChessGame(object):
 
         """
         game_status = self.check_pat_mat(self.player1)
+        self.game_status.append(game_status)
         # Pat
         if game_status == 1:
             return False, "black&white"
