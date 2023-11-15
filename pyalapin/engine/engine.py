@@ -1090,6 +1090,14 @@ class ChessGame(object):
         return fen_possible_castling
 
     def fen_en_passant(self):
+        """
+        Creates the part of the FEN representation about En Passant.
+
+        Returns
+        -------
+        str
+            '-' or coordinate of en-passant cell if last move was double
+        """
         try:
             last_move = self.played_moves[-1]
         except:
