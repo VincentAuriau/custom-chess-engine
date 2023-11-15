@@ -12,6 +12,7 @@ if __name__=="__main__":
 
 	sfp = StockfishPlayer("/Users/vincent.auriau/Python/stockfish/bin/stockfish", white_side=True)
 	game = ChessGame()
+	print("FEN:", game.to_fen())
 	co1, co2 = sfp.get_move_from_fen(game.to_fen())
 	game.board.draw()
 
