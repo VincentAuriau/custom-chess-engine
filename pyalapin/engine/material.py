@@ -495,7 +495,7 @@ class Pawn(Piece):
         str
             String representation of the piece
         """
-        repr = "  P  "
+        repr = "  P  " 
         return repr if self.is_white() else repr.lower()
 
 
@@ -662,7 +662,8 @@ class Bishop(Piece):
         str
             String representation of the piece
         """
-        return "  B  "
+        repr = "  B  "
+        return repr if self.is_white() else repr.lower()
 
 
 class Rook(Piece):
@@ -831,7 +832,8 @@ class Rook(Piece):
         str
             String representation of the piece
         """
-        return "  R  "
+        repr = "  R  "
+        return repr if self.is_white() else repr.lower()
 
 
 class Knight(Piece):
@@ -928,7 +930,8 @@ class Knight(Piece):
         str
             String representation of the piece
         """
-        return "  N  "
+        repr = "  N  "
+        return repr if self.is_white() else repr.lower()
 
     def get_potential_moves(self, x, y):
         """Method to list all the possible moves from coordinates. Only uses authorized movements, no other pieces on a
@@ -1179,7 +1182,8 @@ class Queen(Piece):
         str
             String representation of the piece
         """
-        return "  Q  "
+        repr = "  Q  "
+        return repr if self.is_white() else repr.lower()
 
 
 class King(Piece):
@@ -1411,7 +1415,8 @@ class King(Piece):
         str
             String representation of the piece
         """
-        return "  K  "
+        repr = "  K  "
+        return repr if self.is_white() else repr.lower()
 
     def is_checked(self, board):
         """Method to verify that the king at its current position is not threatened / checked by opponent material.
