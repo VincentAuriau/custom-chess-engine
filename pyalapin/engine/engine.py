@@ -1044,7 +1044,7 @@ class ChessGame(object):
 
     def is_castling_possible(self, is_white_player):
         """Creates FEN representation of possible castling
-        
+
         Parameters
         ----------
         is_white_player: bool
@@ -1113,7 +1113,6 @@ class ChessGame(object):
             return f"{y_cell}{x_cell}"
         else:
             return "-"
-
 
     def is_finished(self):
         """
