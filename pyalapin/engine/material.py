@@ -495,7 +495,8 @@ class Pawn(Piece):
         str
             String representation of the piece
         """
-        return "  P  "
+        repr = "  P  "
+        return repr if self.is_white() else repr.lower()
 
 
 class Bishop(Piece):
