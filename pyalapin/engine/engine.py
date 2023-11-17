@@ -936,6 +936,8 @@ class Board(object):
             whole_text += current_line
             whole_text += "\n"
             whole_text += boarder_line
+        whole_text += "    |  a  |  b  |  c  |  d  |  e  |  f  |  g  |  h  |"
+        whole_text += boarder_line
         if printing:
             print(whole_text + "\n")
         return whole_text
