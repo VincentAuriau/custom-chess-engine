@@ -1,7 +1,5 @@
 import numpy as np
 
-from pyalapin.engine.move import Move
-
 
 class Player:
     """Base class players. If human player only here to ensure that right player is playing right Pieces.

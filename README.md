@@ -24,8 +24,19 @@ if __name__ == '__main__':
     ).run()
 
 ```
-
 ![](docs/scholars_mate_interface.gif)
+
+
+You can play against Stockfish by installing the official [Python interface](https://github.com/zhelyabuzhsky/stockfish).
+```python
+from pyalapin.player.player import Player
+from pyalapin.player.stockfish_player import StockfishPlayer
+from pyalapin.interface import ChessApp
+
+sfp = StockfishPlayer(path_to_stockfish_engine, white_side=False)
+app = ChessApp(w_player=Player(True), b_player=sfp, play_with_ai=True)
+app.run()
+```
 
 ## How to play with Python commands
 
