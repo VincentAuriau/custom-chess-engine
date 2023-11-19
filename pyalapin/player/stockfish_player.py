@@ -77,5 +77,8 @@ class StockfishPlayer(Player):
         """
 
         fen_repr = board.to_fen()
-        return self.get_move_from_fen(fen_repr)
+        start, end = self.get_move_from_fen(fen_repr)
+        move = Move(self, board, board.get_cell(*start), board.get_cell(*end))
+        print(move, board.get_cell(*start), board.get_cell(*end))
+        return move
         
