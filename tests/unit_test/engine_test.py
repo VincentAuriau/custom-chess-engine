@@ -101,8 +101,7 @@ def test_failing_castling():
     _, status = game.move_from_coordinates(game.player1, 0, 4, 0, 6)
     assert status == 0
     assert (
-        game.board.to_fen()
-        == "r1b1kbnr/pppp1ppp/2n5/4p1q1/2B1P3/5N2/PPPP1PPP/RNBQK2R"
+        game.board.to_fen() == "r1b1kbnr/pppp1ppp/2n5/4p1q1/2B1P3/5N2/PPPP1PPP/RNBQK2R"
     ), game.board.to_fen()
 
 
