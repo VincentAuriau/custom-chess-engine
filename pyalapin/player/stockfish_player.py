@@ -85,4 +85,3 @@ class StockfishPlayer(Player):
         move = Move(self, board, board.get_cell(*start), board.get_cell(*end))
         print(move, board.get_cell(*start), board.get_cell(*end))
         return move
-        

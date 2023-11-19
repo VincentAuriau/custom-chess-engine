@@ -404,6 +404,11 @@ class ChessApp(App):
         """
         Builds the game and the display board along with it.
         """
-        game = ChessGame(automatic_draw=False, ai=self.play_with_ai, player1=self.w_player, player2=self.b_player)
+        game = ChessGame(
+            automatic_draw=False,
+            ai=self.play_with_ai,
+            player1=self.w_player,
+            player2=self.b_player,
+        )
         print("game created")
         return BoardInterface(game)
