@@ -598,7 +598,7 @@ class Board(object):
             fen representation and 'KQkq'
         """
         fen = ""
-        for line in self.board:
+        for line in reversed(self.board):
             no_piece_count = 0
             for cell in line:
                 piece = cell.get_piece()
@@ -609,8 +609,8 @@ class Board(object):
                         fen += str(no_piece_count)
                         no_piece_count = 0
                     letter = piece.get_str().replace(" ", "")
-                    if piece.is_white():
-                        letter = letter.lower()
+                    # if piece.is_white():
+                    #     letter = letter.lower()
                     fen += letter
             if no_piece_count > 0:
                 fen += str(no_piece_count)
@@ -936,7 +936,10 @@ class Board(object):
             whole_text += current_line
             whole_text += "\n"
             whole_text += boarder_line
+        whole_text += "\n"
         whole_text += "    |  a  |  b  |  c  |  d  |  e  |  f  |  g  |  h  |"
+
+        whole_text += "\n"
         whole_text += boarder_line
         if printing:
             print(whole_text + "\n")
