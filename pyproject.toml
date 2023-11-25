@@ -29,6 +29,7 @@ dev = ["black", "bumpver", "isort", "pip-tools", "pytest", "kivy"]
 
 [project.urls]
 Homepage = "https://github.com/VincentAuriau/custom-chess-engine"
+homepage = "https://github.com/VincentAuriau/custom-chess-engine"
 
 [tool.setuptools.packages.find]
 include=["pyalapin*"]
