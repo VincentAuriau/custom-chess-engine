@@ -3,7 +3,7 @@ import numpy as np
 
 from PIL import Image
 
-black_pawn = np.array(Image.open("../dev-illustrations/knight_grey.png"))
+black_pawn = np.array(Image.open("../dev-illustrations/_bishop_grey.png"))
 black_pawn = black_pawn.astype("float32")
 black_pawn = black_pawn.astype("uint8")
 print(black_pawn[300])
@@ -19,7 +19,54 @@ print("A")
 print(np.unique(black_pawn[:, :, 3]))
 plt.imshow(black_pawn[:, :, :])
 plt.show()
+plt.imshow(black_pawn[:, :, 3], cmap="gray")
+plt.show()
 
+bp = black_pawn.copy()
+
+for i in range(300, 400):
+	for j in range(125, 360):
+		bp[i][j][0] = 255
+		bp[i][j][1] = 255
+		bp[i][j][2] = 255
+
+for i in range(400, 440):
+	for j in range(125, 360):
+		bp[i][j][0] = 255
+		bp[i][j][1] = 255
+		bp[i][j][2] = 255
+
+for i in range(440, 500):
+	for j in range(125+int((i-440) / 2), 360-int((i-440) / 2)):
+		bp[i][j][0] = 255
+		bp[i][j][1] = 255
+		bp[i][j][2] = 255
+
+for i in range(500, 517):
+	for j in range(155+2*(i-500), 330-2*(i-500)):
+		bp[i][j][0] = 255
+		bp[i][j][1] = 255
+		bp[i][j][2] = 255
+
+
+"""
+for i, j in zip([479, 480, 481]*3, [138, 138, 138, 139, 139, 130, 140, 140, 140]):
+	bp[i][j][0] = 255
+	bp[i][j][1] = 0
+	bp[i][j][2] = 0
+for i, j in zip([480, 481, 482], [141, 141, 142]):
+	bp[i][j][0] = 255
+	bp[i][j][1] = 0
+	bp[i][j][2] = 0
+plt.figure()
+plt.imshow(bp[:, :, :3])
+plt.show()
+"""
+plt.figure()
+plt.imshow(bp[:, :, :3])
+plt.show()
+
+black_pawn = bp
 
 black_pawn = black_pawn[:, :, :3]
 for h in range(len(black_pawn)):
@@ -36,6 +83,9 @@ for h in range(len(black_pawn)):
 
 plt.imshow(black_pawn[:, :, :3])
 plt.show()
+
+img = Image.fromarray(black_pawn[:, :, 0])
+img.save("../gs_illustrations/bishop_grey.png")
 print(black_pawn)
 
 r_dict = {0:0, 128: 255, 255: 175}
