@@ -62,7 +62,7 @@ class ColorEditor(object):
 
 		return edited_img, down_edited_img
 
-	def get_edited_white_material(self, material_type):
+	def get_edited_white_material(self, material_type, cell_color):
 		if cell_color == "black":
 			cell_color = self.black_cell
 		else:
@@ -96,10 +96,26 @@ class ColorEditor(object):
 
 
 	def generate_all_images(self, path="temp_illustrations"):
-		b = self.get_edited_black_cell()
+		b, down_b = self.get_edited_black_cell()
 		Image.from_array(b).save(os.path.join(path, "b.png"))
-		w = self.get_edited_black_cell()
-		Image.from_array(b).save(os.path.join(path, "w.png"))
+		Image.from_array(down_b).save(os.path.join(path, "down_b.png"))
+		w, down_w = self.get_edited_black_cell()
+		Image.from_array(w).save(os.path.join(path, "w.png"))
+		Image.from_array(down_w).save(os.path.join(path, "down_w.png"))
 		for piece in ["pawn", "bishop", "knight", "rook", "king", "queen"]:
-			b_p = self.get_edited_black_material(material_type=piece, )
+			wb_p, down_wb_p = self.get_edited_black_material(material_type=piece, "white")
+			bb_p, down_bb_p = self.get_edited_black_material(material_type=piece, "black")
+			ww_p, down_ww_p = self.get_edited_white_material(material_type=piece, "white")
+			bw_p, down_bw_p = self.get_edited_white_material(material_type=piece, "black")
+			prefix = "N" if piece == "knight" else piece[0].upper()
+			Image.from_array(wb_p).save(os.path.join(path, f"wb_{prefix}.png"))
+			Image.from_array(down_wb_p).save(os.path.join(path, f"down_wb_{prefix}.png"))
 
+			Image.from_array(bb_p).save(os.path.join(path, f"bb_{prefix}.png"))
+			Image.from_array(down_bb_p).save(os.path.join(path, f"down_bb_{prefix}.png"))
+
+			Image.from_array(ww_p).save(os.path.join(path, f"ww_{prefix}.png"))
+			Image.from_array(down_ww_p).save(os.path.join(path, f"down_ww_{prefix}.png"))
+
+			Image.from_array(bw_p).save(os.path.join(path, f"bw_{prefix}.png"))
+			Image.from_array(down_bw_p).save(os.path.join(path, f"down_bw_{prefix}.png"))
