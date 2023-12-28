@@ -89,7 +89,18 @@ class BoardInterface(GridLayout):
 
         """
         super(BoardInterface, self).__init__(**kwargs)
-        self.path_to_illustrations = "illustrations"
+        if os.path.isdir("temp_images"):
+            imgs = []
+            for z in os.listdir("temp_images"):
+                if "png" in z:
+                    imgs.append(z)
+            if len(imgs) == len(os.listdir("illustrations")):
+                self.path_to_illustrations = "temp_images"
+            else:
+                self.path_to_illustrations = "illustrations"
+        else:
+            self.path_to_illustrations = "illustrations"
+
         self.game = game
 
         if game.ai:
