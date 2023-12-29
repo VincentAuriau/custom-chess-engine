@@ -130,6 +130,11 @@ class Move(object):
                 piece = "O-O-O"
                 start = ""
                 end = ""
+            else:
+                piece = "O-O"
+                start = ""
+                end = ""
+
         king = (
             self.board.white_king
             if not self.player.white_side
