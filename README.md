@@ -61,3 +61,20 @@ game.move_from_coordinates(game.player2, 6, 2, 4, 2)
 game.move_from_coordinates(game.player2, 2, 5, 6, 5)
 ```
 There are colors in the command line not showing here in the GIF, though...
+
+## How to change interface colors
+
+With line command you can create new illustrations by specifying the RGB colors you want. You can specify the colors of the cells and of the pieces (outer and inner colors).
+Use the following command with the colors you want:
+```bash
+python interface/colorize.py -ccb 0 191 255 -ccw 207 185 151 -ibp 109 7 26 -obp 0 0 0 -iwp 200 200 200 -owp 255 255 255
+```
+Arguments are:
+- -ccb/--color_cell_black: RGB, default 0, 191, 255
+- -ccw/--color_cell_white: RGB, default 207, 185, 151
+- -ibp/--inner_black_piece: RGB, default 109, 7, 26
+- -obp/--outer_black_piece: RGB, default 0, 0, 0
+- -iwp/--inner_white_piece: RGB, default 200, 200, 200
+- -owp/--outer_white_piece: RGB, default 255, 255, 255
+
+The command creates (or replaces) the illustrations that are in the temp_images/ folder. If the folder exists, the interface uses theses illustrations. Destroy it to come back to standard illustrations.
