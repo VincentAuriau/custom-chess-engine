@@ -2,7 +2,7 @@ venv/
 .idea/
 .DS_Store
 __pycache__/
-
 .pstats
 *.egg-info/
 dist/
+settings.py

@@ -294,13 +294,14 @@ class BoardInterface(GridLayout):
 
                     # Resets background colors of player
                     ai_move = self.game.player2.time_to_play(self.game.board)
+                    print(ai_move)
                     self.game.board.draw()
                     game_is_on = self.game.move(ai_move, self.game.player2)
 
                     # Verify game is still going on
                     # Actually we consider that an AI cannot trigger an impossible move here
                     # Maybe should be modified ?
-
+                    print("game_is_on", game_is_on)
                     if game_is_on[0]:
                         self.update()
                         (
@@ -380,17 +381,24 @@ class ChessApp(App):
     Main app to use to play game, by calling ChessApp().build() and then players.
     """
 
-    def __init__(self, play_with_ai=False, **kwargs):
+    def __init__(self, play_with_ai=False, w_player=None, b_player=None, **kwargs):
         """
         Initialization, with precision whether or not playing with AI.
         """
         super().__init__(**kwargs)
         self.play_with_ai = play_with_ai
+        self.w_player = w_player
+        self.b_player = b_player
 
     def build(self):
         """
         Builds the game and the display board along with it.
         """
-        game = ChessGame(automatic_draw=False, ai=self.play_with_ai)
+        game = ChessGame(
+            automatic_draw=False,
+            ai=self.play_with_ai,
+            player1=self.w_player,
+            player2=self.b_player,
+        )
         print("game created")
         return BoardInterface(game)

@@ -598,7 +598,7 @@ class Board(object):
             fen representation and 'KQkq'
         """
         fen = ""
-        for line in self.board:
+        for line in reversed(self.board):
             no_piece_count = 0
             for cell in line:
                 piece = cell.get_piece()
@@ -609,13 +609,13 @@ class Board(object):
                         fen += str(no_piece_count)
                         no_piece_count = 0
                     letter = piece.get_str().replace(" ", "")
-                    if piece.is_white():
-                        letter = letter.lower()
+                    # if piece.is_white():
+                    #     letter = letter.lower()
                     fen += letter
             if no_piece_count > 0:
                 fen += str(no_piece_count)
             fen += "/"
-        return fen[:-1], "KQkq"
+        return fen[:-1]
 
     def one_hot_encode(self, white_side=True):
         """Method to create a representation of the board with OneHot encode of the pieces.
@@ -936,6 +936,11 @@ class Board(object):
             whole_text += current_line
             whole_text += "\n"
             whole_text += boarder_line
+        whole_text += "\n"
+        whole_text += "    |  a  |  b  |  c  |  d  |  e  |  f  |  g  |  h  |"
+
+        whole_text += "\n"
+        whole_text += boarder_line
         if printing:
             print(whole_text + "\n")
         return whole_text
@@ -1017,6 +1022,7 @@ class ChessGame(object):
             self.history = []
 
         self.automatic_draw = automatic_draw
+        self.half_move_clock = 0
 
     def reset_game(self):
         """Method to reset the game. Recreates the borad, the pieces and restarts the game."""
@@ -1024,6 +1030,7 @@ class ChessGame(object):
         self.played_moves = []
         self.history = []
         self.to_play_player = self.player1
+        self.half_move_clock = 0
 
     def to_fen(self):
         """
@@ -1034,9 +1041,83 @@ class ChessGame(object):
         str
             fen representation of the board.
         """
-        pieces, castling = self.board.to_fen()
+        board_fen = self.board.to_fen()
         color_playing = "w" if self.to_play_player.is_white_side() else "b"
-        return pieces + " " + color_playing + " " + castling + " - 0 1"
+        castling = self.is_castling_possible(True) + self.is_castling_possible(False)
+        full_moves_nb = len(self.played_moves) // 2 + 1
+        return f"{board_fen} {color_playing} {castling} {self.fen_en_passant()} {full_moves_nb} {self.half_move_clock}"
+
+    def is_castling_possible(self, is_white_player):
+        """Creates FEN representation of possible castling
+
+        Parameters
+        ----------
+        is_white_player: bool
+            If castling possible checked for white player
+
+        Returns
+        -------
+        str:
+            FEN representation of possible castling
+        """
+
+        fen_possible_castling = ""
+        if is_white_player:
+            piece = self.board.get_cell(0, 4).get_piece()
+            if not isinstance(piece, material.King):
+                return ""
+            elif piece.has_moved or piece.castling_done:
+                return ""
+            else:
+                kingside_rook = self.board.get_cell(0, 7).get_piece()
+                if isinstance(kingside_rook, material.Rook):
+                    if not kingside_rook.has_moved:
+                        fen_possible_castling += "K"
+                queenside_rook = self.board.get_cell(0, 0).get_piece()
+                if isinstance(kingside_rook, material.Rook):
+                    if not kingside_rook.has_moved:
+                        fen_possible_castling += "Q"
+        else:
+            piece = self.board.get_cell(0, 4).get_piece()
+            if not isinstance(piece, material.King):
+                return ""
+            elif piece.has_moved or piece.castling_done:
+                return ""
+            else:
+                kingside_rook = self.board.get_cell(7, 7).get_piece()
+                if isinstance(kingside_rook, material.Rook):
+                    if not kingside_rook.has_moved:
+                        fen_possible_castling += "k"
+                queenside_rook = self.board.get_cell(7, 0).get_piece()
+                if isinstance(kingside_rook, material.Rook):
+                    if not kingside_rook.has_moved:
+                        fen_possible_castling += "q"
+        return fen_possible_castling
+
+    def fen_en_passant(self):
+        """
+        Creates the part of the FEN representation about En Passant.
+
+        Returns
+        -------
+        str
+            '-' or coordinate of en-passant cell if last move was double
+        """
+        try:
+            last_move = self.played_moves[-1]
+        except:
+            return "-"
+        if not isinstance(last_move.move_piece, material.Pawn):
+            return "-"
+
+        dx = last_move.start.get_x() - last_move.end.get_x()
+        x_cell = 8 - int(last_move.start.get_x() - last_move.end.get_x()) / 2
+        y_cell = ["a", "b", "c", "d", "e", "f", "g", "h"][last_move.start.get_y()]
+
+        if dx == 2:
+            return f"{y_cell}{x_cell}"
+        else:
+            return "-"
 
     def is_finished(self):
         """
@@ -1148,6 +1229,8 @@ class ChessGame(object):
         can_player_move = self.can_player_move(player)
 
         if can_player_move:
+            if self.half_move_clock >= 50:
+                return 1
             return 0
         # If player cannot move any piece
         else:
@@ -1205,7 +1288,11 @@ class ChessGame(object):
         else:
             assert moved_piece.is_white() == player.is_white_side()
             # Actually move pieces
-            move.move_pieces()
+            reset_half_move_clock = move.move_pieces()
+            if reset_half_move_clock:
+                self.half_move_clock = 0
+            else:
+                self.half_move_clock += 1
 
         # Store move
         self.played_moves.append(move)
@@ -1248,6 +1335,7 @@ class ChessGame(object):
 
         """
         game_status = self.check_pat_mat(self.player1)
+        self.game_status.append(game_status)
         # Pat
         if game_status == 1:
             return False, "black&white"

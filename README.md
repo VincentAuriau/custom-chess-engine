@@ -1,10 +1,18 @@
-## PyAlapin, your customized chess engine
+# PyAlapin, your customized chess engine
 Is it the best, most efficient and state of the art chess engine ? I'm pretty sure not.
 
 However, driven by passion and madness, I have developed my own chess game in Python.
 For your pretty eyes and your devilish smile, I share it with you. But only with you.
 
 Special thanks and dedication to LeMerluche, crushing its opponents on chess.com with alapin openings ❤️
+
+## How to install
+Simply use:
+```bash
+pip install pyalapin
+```
+You only need [numpy](https://numpy.org/) to play with with terminal interface and with Python.
+You will need [kivy](https://kivy.org/) to play with the interface.
 
 ## How to play with interface
 ```python
@@ -16,8 +24,19 @@ if __name__ == '__main__':
     ).run()
 
 ```
-
 ![](docs/scholars_mate_interface.gif)
+
+
+You can play against Stockfish by installing the official [Python interface](https://github.com/zhelyabuzhsky/stockfish).
+```python
+from pyalapin.player.player import Player
+from pyalapin.player.stockfish_player import StockfishPlayer
+from pyalapin.interface import ChessApp
+
+sfp = StockfishPlayer(path_to_stockfish_engine, white_side=False)
+app = ChessApp(w_player=Player(True), b_player=sfp, play_with_ai=True)
+app.run()
+```
 
 ## How to play with Python commands
 

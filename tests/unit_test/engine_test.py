@@ -32,8 +32,8 @@ def test_promotion_to_rook():
         game.player1, 6, 6, 7, 6, extras={"promote_into": "rook"}
     )
     assert (
-        game.board.to_fen()[0] == "rnbqkbnr/pppp1ppp/8/8/P7/7N/1PPPP2P/RNBQKBrR"
-    ), game.board.to_fen()[0]
+        game.board.to_fen() == "rnbqkbRr/1pppp2p/7n/p7/8/8/PPPP1PPP/RNBQKBNR"
+    ), game.board.to_fen()
 
 
 def test_default_promotion():
@@ -51,8 +51,8 @@ def test_default_promotion():
     game.move_from_coordinates(game.player2, 5, 0, 4, 0)
     game.move_from_coordinates(game.player1, 6, 6, 7, 6)
     assert (
-        game.board.to_fen()[0] == "rnbqkbnr/pppp1ppp/8/8/P7/7N/1PPPP2P/RNBQKBqR"
-    ), game.board.to_fen()[0]
+        game.board.to_fen() == "rnbqkbQr/1pppp2p/7n/p7/8/8/PPPP1PPP/RNBQKBNR"
+    ), game.board.to_fen()
 
 
 def test_working_castling():
@@ -76,9 +76,9 @@ def test_working_castling():
     # big castling move
     game.move_from_coordinates(game.player2, 7, 4, 7, 2)
     assert (
-        game.board.to_fen()[0]
-        == "r1b2rk1/ppppqppp/2n2n2/2b1p3/4P1Q1/2NP4/PPPB1PPP/2KR1BNR"
-    ), game.board.to_fen()[0]
+        game.board.to_fen()
+        == "2kr1bnr/pppb1ppp/2np4/4p1q1/2B1P3/2N2N2/PPPPQPPP/R1B2RK1"
+    ), game.board.to_fen()
 
 
 def test_failing_castling():
@@ -101,9 +101,8 @@ def test_failing_castling():
     _, status = game.move_from_coordinates(game.player1, 0, 4, 0, 6)
     assert status == 0
     assert (
-        game.board.to_fen()[0]
-        == "rnbqk2r/pppp1ppp/5n2/2b1p3/4P1Q1/2N5/PPPP1PPP/R1B1KBNR"
-    ), game.board.to_fen()[0]
+        game.board.to_fen() == "r1b1kbnr/pppp1ppp/2n5/4p1q1/2B1P3/5N2/PPPP1PPP/RNBQK2R"
+    ), game.board.to_fen()
 
 
 def test_en_passant():
@@ -115,8 +114,8 @@ def test_en_passant():
     game.move_from_coordinates(game.player2, 6, 5, 4, 5)
     game.move_from_coordinates(game.player1, 4, 4, 5, 5)
     assert (
-        game.board.to_fen()[0] == "rnbqkbnr/pppp1ppp/8/8/5P2/P4p2/1PPPP1PP/RNBQKBNR"
-    ), game.board.to_fen()[0]
+        game.board.to_fen() == "rnbqkbnr/1pppp1pp/p4P2/5p2/8/8/PPPP1PPP/RNBQKBNR"
+    ), game.board.to_fen()
 
 
 def test_blocked_by_mat():

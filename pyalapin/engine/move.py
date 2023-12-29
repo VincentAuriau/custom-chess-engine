@@ -168,11 +168,9 @@ class Move(object):
             Whether self is castling or not.
         """
         if not isinstance(self.moved_piece, material.King):
-            ###print("not castling becasuse king not moved")
             return False
+
         elif self.moved_piece.castling_done or self.moved_piece.has_moved:
-            ###print(self.moved_piece.castling_done)
-            ###print(self.moved_piece.has_moved)
             return False
 
         else:
@@ -215,7 +213,6 @@ class Move(object):
                         self.board.get_cell(self.start.x, 4),
                     ]
             else:
-                ###print('king did not move to a castling position')
                 return False
 
             # Verifying that the cells between rook and king are empty and that starting
@@ -253,10 +250,6 @@ class Move(object):
                 return True
 
             else:
-                ###print('Conditions for castling:')
-                ###print('Rook has not moved:', rook_to_move.has_moved)
-                ###print('Cells in between empty:', empty_cells_check)
-                ###print('Cells in between not threatened:', not_threatened_cells)
                 return False
 
     def _is_en_passant(self):
@@ -348,9 +341,15 @@ class Move(object):
         """
         # Do everything from coordinates so that only board needs to be copied in self.deepcopy() ?
 
+        if isinstance(self.moved_piece, material.Pawn):
+            reset_halfmove_clock = True
+        else:
+            reset_halfmove_clock = False
+
         # Kills Piece on landing Cell if needed.
         if self.killed_piece is not None:
             self.board.kill_piece_from_coordinates((self.end.x, self.end.y))
+            reset_halfmove_clock = True
         # Moves Piece on the Board
         self.board.move_piece_from_coordinates(
             (self.start.x, self.start.y), (self.end.x, self.end.y)
@@ -372,6 +371,7 @@ class Move(object):
 
         # Sets the different movement related attributes of Pieces
         self._set_moved_attribute()
+        return reset_halfmove_clock
 
     def is_possible_move(self, check_chess=True):
         # REFONDRE, particulièrement, faire en sorte qu'on ne vérifie chaque condition qu'une seule fois
