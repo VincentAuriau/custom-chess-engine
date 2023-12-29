@@ -38,7 +38,6 @@ def color_one_img(pil_img, background_color, border_color, inner_color):
 
 
 if __name__ == "__main__":
-
     parser = argparse.ArgumentParser()
     parser.add_argument("-ccb", "--color_cell_black", nargs="+")
     parser.add_argument("-ccw", "--color_cell_white", nargs="+")
