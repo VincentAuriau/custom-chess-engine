@@ -14,27 +14,6 @@ from kivy.graphics import Rectangle, Color, Canvas
 from pyalapin.engine.engine import ChessGame
 
 
-class LoginScreen(GridLayout):
-    def __init__(self, **kwargs):
-        """
-        Base class for a Login Screen, not used yet
-        """
-        super(LoginScreen, self).__init__(**kwargs)
-        self.cols = 8
-        self.add_widget(Label(text=""))
-        self.username = TextInput(multiline=False)
-        self.add_widget(self.username)
-        self.add_widget(Label(text="password"))
-        self.password = TextInput(password=True, multiline=False)
-        self.add_widget(self.password)
-
-        self.add_widget(Label(text="password2"))
-        self.password2 = TextInput(password=True, multiline=False)
-        self.add_widget(self.password2)
-
-        self.add_widget(Rectangle(pos=(10, 10), size=(500, 500)))
-
-
 class DisplayableCell(Button):
     """Base class to represent a Cell as Button"""
 
@@ -398,7 +377,7 @@ class BoardInterface(GridLayout):
 
 class ChessApp(App):
     """
-    Main app to use to play game, by calling MyApp().buil() and then player.
+    Main app to use to play game, by calling ChessApp().build() and then players.
     """
 
     def __init__(self, play_with_ai=False, **kwargs):
