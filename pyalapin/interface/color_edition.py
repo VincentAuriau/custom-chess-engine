@@ -16,7 +16,6 @@ class ColorEditor(object):
         black_piece_fill,
         black_piece_border,
     ):
-
         self.white_cell = white_cell
         self.down_white_cell = down_white_cell
         self.black_cell = black_cell
