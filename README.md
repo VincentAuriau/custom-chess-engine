@@ -64,7 +64,8 @@ There are colors in the command line not showing here in the GIF, though...
 
 ## How to change interface colors
 
-With line command:
+With line command you can create new illustrations by specifying the RGB colors you want. You can specify the colors of the cells and of the pieces (outer and inner colors).
+Use the following command with the colors you want:
 ```bash
 python interface/colorize.py -ccb 0 191 255 -ccw 207 185 151 -ibp 109 7 26 -obp 0 0 0 -iwp 200 200 200 -owp 255 255 255
 ```
