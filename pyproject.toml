@@ -4,12 +4,19 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pyalapin"
-version = "0.0.1"
+version = "0.0.3"
 authors = [
   { name = "Vincent Auriau", email = "vincent.auriau.dev@gmail.com"},
 ]
 license = { file = "LICENSE" }
 readme = "README.md"
+classifiers = [
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Topic :: Games/Entertainment :: Board Games",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
 
 description = "Custom chess engine built specifically to develop AIs"
 keywords = ["chess", "ai", "interface"]
@@ -18,13 +25,11 @@ dependencies = [
 ]
 requires-python = ">=3.8"
 [project.optional-dependencies]
-dev = ["black", "bumpver", "isort", "pip-tools", "pytest", "kivy"]
+dev = ["black", "bumpver", "isort", "pip-tools", "pytest", "kivy", "stockfish"]
 
 [project.urls]
 Homepage = "https://github.com/VincentAuriau/custom-chess-engine"
 
-[tool.setuptools]
-packages = [
-  "tests",
-  "pyalapin"
-]
+[tool.setuptools.packages.find]
+include=["pyalapin*"]
+namespaces=false
