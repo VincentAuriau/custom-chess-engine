@@ -127,16 +127,16 @@ black_pawn = bp
 
 black_pawn = black_pawn[:, :, :3]
 for h in range(len(black_pawn)):
-	row = black_pawn[h]
-	for w in range(len(row)):
-		pix = row[w]
-		for i in range(len(pix)):
-			if pix[i] in list(range(116, 165)):
-				black_pawn[h][w][i] = 255
-			elif pix[i] == 255 or pix[i] == 0:
-				pix[i] = 0
-			else:
-				pix[i] = 128 * (i == 0)
+    row = black_pawn[h]
+    for w in range(len(row)):
+        pix = row[w]
+        for i in range(len(pix)):
+            if pix[i] in list(range(116, 165)):
+                black_pawn[h][w][i] = 255
+            elif pix[i] == 255 or pix[i] == 0:
+                pix[i] = 0
+            else:
+                pix[i] = 128 * (i == 0)
 
 plt.imshow(black_pawn[:, :, :3])
 plt.show()
@@ -145,16 +145,17 @@ img = Image.fromarray(black_pawn[:, :, 0])
 img.save("../gs_illustrations/queen_grey.png")
 print(black_pawn)
 
-r_dict = {0:0, 128: 255, 255: 175}
-g_dict = {0:0, 128: 192, 255: 238}
-b_dict = {0:0, 128: 203, 255: 238}
-own_pawn = [np.vectorize(r_dict.get)(black_pawn[:, :, 0].astype("uint8")), 
-np.vectorize(g_dict.get)(black_pawn[:, :, 0]),
-np.vectorize(b_dict.get)(black_pawn[:, :, 0])]
+r_dict = {0: 0, 128: 255, 255: 175}
+g_dict = {0: 0, 128: 192, 255: 238}
+b_dict = {0: 0, 128: 203, 255: 238}
+own_pawn = [
+    np.vectorize(r_dict.get)(black_pawn[:, :, 0].astype("uint8")),
+    np.vectorize(g_dict.get)(black_pawn[:, :, 0]),
+    np.vectorize(b_dict.get)(black_pawn[:, :, 0]),
+]
 own_pawn = np.dstack(own_pawn)
 rose = 255, 192, 203
-turq = 175,238,238
+turq = 175, 238, 238
 print(own_pawn)
 plt.imshow(own_pawn)
 plt.show()
-
