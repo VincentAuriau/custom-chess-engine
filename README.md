@@ -1,4 +1,11 @@
-# PyAlapin, your customized chess engine
+# PyAlapin, your customized chess engine ![Static Badge](https://img.shields.io/badge/chess-e1c199) ![Static Badge](https://img.shields.io/badge/alapin-850606)
+![Python Versions](https://img.shields.io/pypi/pyversions/pyalapin)
+![PyPI - Version](https://img.shields.io/pypi/v/pyalapin)
+![Last Release](https://img.shields.io/github/release-date/VincentAuriau/custom-chess-engine)
+[![Downloads](https://static.pepy.tech/badge/pyalapin/month)](https://pepy.tech/project/pyalapin)
+![License](https://img.shields.io/pypi/l/pyalapin)
+
+
 Is it the best, most efficient and state of the art chess engine ? I'm pretty sure not.
 
 However, driven by passion and madness, I have developed my own chess game in Python.
