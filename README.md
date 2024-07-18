@@ -10,6 +10,7 @@
 
 </div>
 
+<img align="right" width="200" src="illustrations/icon.png" />
 Is it the best, most efficient and state of the art chess engine ? I'm pretty sure not.
 
 However, driven by passion and madness, I have developed my own chess game in Python.
